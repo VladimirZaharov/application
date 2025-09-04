@@ -114,7 +114,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
 
           <footer className="mt-16 pt-6 border-t text-center text-xs text-muted-foreground">
             <p>
-              {branding.companyName || 'Ваша компания'} | Создано с помощью PropoCraft
+              {branding.companyName || 'Ваша компания'} | Отдел стратегического планирования
             </p>
             <p>{new Date().toLocaleDateString()}</p>
           </footer>
