@@ -64,7 +64,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
 
   return (
     <main className="flex-1 p-4 sm:p-6 md:p-10 bg-muted/40 print-container">
-      <Card className="w-full max-w-4xl mx-auto shadow-xl print-content" id="proposal-preview">
+      <Card className="w-full max-w-4xl mx-auto shadow-xl print-content bg-background" id="proposal-preview">
         <CardContent className="p-8 md:p-12">
           <header className="flex justify-between items-start mb-12">
             <div>
