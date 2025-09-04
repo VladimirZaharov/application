@@ -68,7 +68,7 @@ export default function PropoCraftEditor() {
 
   const [branding, setBranding] = useState<Branding>({
     logoUrl: 'https://picsum.photos/seed/logo/200/100',
-    accentColor: '#8E44AD',
+    accentColor: '#FFC502',
     companyName: 'ПОИСКОВАЯ ИНДУСТРИЯ',
   });
 
