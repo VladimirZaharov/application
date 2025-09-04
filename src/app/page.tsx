@@ -1,3 +1,9 @@
+import PropoCraftEditor from '@/components/propocraft-editor';
+
 export default function Home() {
-  return <></>;
+  return (
+    <main>
+      <PropoCraftEditor />
+    </main>
+  );
 }
