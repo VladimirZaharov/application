@@ -38,13 +38,13 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
       const line = lines[i];
       if (line.startsWith('### ')) {
         flushParagraphs();
-        elements.push(<h3 key={`h3-${i}`} className="text-xl font-semibold font-headline mt-6 mb-2" style={{ color: branding.accentColor }}>{line.substring(4)}</h3>);
+        elements.push(<h3 key={`h3-${i}`} className="text-xl font-semibold font-headline mt-6 mb-2">{line.substring(4)}</h3>);
       } else if (line.startsWith('## ')) {
         flushParagraphs();
         elements.push(<h2 key={`h2-${i}`} className="text-2xl font-bold font-headline mt-8 mb-4 pb-2 border-b" style={accentStyle}>{line.substring(3)}</h2>);
       } else if (line.startsWith('# ')) {
         flushParagraphs();
-        elements.push(<h1 key={`h1-${i}`} className="text-3xl font-bold font-headline" style={{ color: branding.accentColor }}>{line.substring(2)}</h1>);
+        elements.push(<h1 key={`h1-${i}`} className="text-3xl font-bold font-headline">{line.substring(2)}</h1>);
       } else if (line.startsWith('<img')) {
         flushParagraphs();
         elements.push(<div key={`img-div-${i}`} dangerouslySetInnerHTML={createMarkup(line)} />);
@@ -64,7 +64,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
 
   return (
     <main className="flex-1 p-4 sm:p-6 md:p-10 bg-muted/40 print-container">
-      <Card className="w-full max-w-4xl mx-auto shadow-xl print-content bg-background" id="proposal-preview">
+      <Card className="w-full max-w-4xl mx-auto shadow-xl print-content" id="proposal-preview">
         <CardContent className="p-8 md:p-12">
           <header className="flex justify-between items-start mb-12">
             <div>
