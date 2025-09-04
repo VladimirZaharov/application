@@ -1,6 +1,6 @@
 'use client';
 
-import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import type { ChangeEvent, ClipboardEvent, Dispatch, SetStateAction } from 'react';
 import {
   Bot,
   Brush,
@@ -90,6 +90,29 @@ export default function EditorSidebar({
         );
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handlePaste = (id: string, e: ClipboardEvent<HTMLTextAreaElement>) => {
+    const items = e.clipboardData.items;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') !== -1) {
+        const file = items[i].getAsFile();
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const imageUrl = reader.result as string;
+            const imageMarkdown = `\n<img src="${imageUrl}" alt="Вставленное изображение" style="width: 100%; border-radius: 0.5rem; margin-top: 1rem;"/>\n`;
+            setSelectedProblems(prev =>
+              prev.map(p =>
+                p.id === id ? { ...p, content: p.content + imageMarkdown } : p
+              )
+            );
+          };
+          reader.readAsDataURL(file);
+          e.preventDefault();
+        }
+      }
     }
   };
 
@@ -214,6 +237,7 @@ export default function EditorSidebar({
                                 id={`content-${problem.id}`}
                                 value={problem.content}
                                 onChange={(e) => handleProblemUpdate(problem.id, 'content', e.target.value)}
+                                onPaste={(e) => handlePaste(problem.id, e)}
                                 rows={8}
                               />
                             </div>
