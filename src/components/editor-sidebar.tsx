@@ -103,9 +103,16 @@ export default function EditorSidebar({
           reader.onloadend = () => {
             const imageUrl = reader.result as string;
             const imageMarkdown = `\n<img src="${imageUrl}" alt="Вставленное изображение" style="width: 100%; border-radius: 0.5rem; margin-top: 1rem;"/>\n`;
+            
+            const textarea = e.target as HTMLTextAreaElement;
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const currentContent = textarea.value;
+            const newContent = currentContent.substring(0, start) + imageMarkdown + currentContent.substring(end);
+
             setSelectedProblems(prev =>
               prev.map(p =>
-                p.id === id ? { ...p, content: p.content + imageMarkdown } : p
+                p.id === id ? { ...p, content: newContent } : p
               )
             );
           };
