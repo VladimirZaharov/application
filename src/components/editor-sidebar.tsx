@@ -81,7 +81,13 @@ export default function EditorSidebar({
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        handleProblemUpdate(id, 'screenshotUrl', reader.result as string);
+        const imageUrl = reader.result as string;
+        const imageMarkdown = `\n\n<img src="${imageUrl}" alt="Скриншот" style="width: 100%; border-radius: 0.5rem; margin-top: 1rem;"/>\n\n`;
+        setSelectedProblems((prev) =>
+          prev.map((p) =>
+            p.id === id ? { ...p, content: p.content + imageMarkdown } : p
+          )
+        );
       };
       reader.readAsDataURL(file);
     }
@@ -203,44 +209,17 @@ export default function EditorSidebar({
                           </AccordionTrigger>
                           <AccordionContent className="p-4 space-y-4">
                             <div className="space-y-2">
-                              <Label htmlFor={`desc-${problem.id}`}>Описание</Label>
+                              <Label htmlFor={`content-${problem.id}`}>Содержание</Label>
                               <Textarea
-                                id={`desc-${problem.id}`}
-                                value={problem.description}
-                                onChange={(e) => handleProblemUpdate(problem.id, 'description', e.target.value)}
-                                rows={4}
+                                id={`content-${problem.id}`}
+                                value={problem.content}
+                                onChange={(e) => handleProblemUpdate(problem.id, 'content', e.target.value)}
+                                rows={8}
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor={`img-${problem.id}`}>Скриншот</Label>
-                               {problem.screenshotUrl ? (
-                                <div className="relative">
-                                  <img src={problem.screenshotUrl} alt="Screenshot" className="w-full h-auto rounded-md border" />
-                                  <Button
-                                    variant="destructive"
-                                    size="icon"
-                                    className="absolute top-2 right-2 h-7 w-7"
-                                    onClick={() => handleProblemUpdate(problem.id, 'screenshotUrl', '')}
-                                  >
-                                    <X className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              ) : (
-                                <div className="flex items-center justify-center w-full">
-                                  <Label
-                                    htmlFor={`screenshot-${problem.id}`}
-                                    className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-lg cursor-pointer bg-secondary hover:bg-muted"
-                                  >
-                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                      <UploadCloud className="w-8 h-8 mb-2 text-muted-foreground" />
-                                      <p className="mb-1 text-sm text-muted-foreground">
-                                        <span className="font-semibold">Нажмите, чтобы загрузить</span>
-                                      </p>
-                                    </div>
-                                    <Input id={`screenshot-${problem.id}`} type="file" className="hidden" accept="image/*" onChange={(e) => handleScreenshotUpload(problem.id, e)} />
-                                  </Label>
-                                </div>
-                              )}
+                              <Label htmlFor={`screenshot-upload-${problem.id}`} className="text-sm font-medium">Добавить скриншот в содержание</Label>
+                              <Input id={`screenshot-upload-${problem.id}`} type="file" className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100" accept="image/*" onChange={(e) => handleScreenshotUpload(problem.id, e)} />
                             </div>
                           </AccordionContent>
                         </AccordionItem>

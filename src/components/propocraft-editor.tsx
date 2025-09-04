@@ -14,7 +14,7 @@ const defaultProposalText = (problems: Problem[]) => {
       ? problems
           .map(
             (p) =>
-              `### ${p.title}\n${p.description}${p.screenshotUrl ? `\n\n<img src="${p.screenshotUrl}" alt="${p.title}" data-ai-hint="problem illustration" style="width: 100%; border-radius: 0.5rem; margin-top: 1rem;"/>` : ''}`
+              `### ${p.title}\n${p.content}`
           )
           .join('\n\n')
       : 'В этом разделе не было выявлено конкретных проблем. Мы рекомендуем провести ознакомительную сессию для определения ключевых задач и возможностей.';

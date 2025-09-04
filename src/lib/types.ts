@@ -2,8 +2,7 @@ export interface Problem {
   id: string;
   title: string;
   category: string;
-  description: string;
-  screenshotUrl?: string;
+  content: string;
 }
 
 export interface Branding {
