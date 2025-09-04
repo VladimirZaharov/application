@@ -62,7 +62,7 @@ export default function PropoCraftEditor() {
 
   const [proposal, setProposal] = useState<Proposal>({
     clientName: 'Globex Corporation',
-    projectName: 'Инициатива по цифровой трансформации',
+    projectName: 'Стратегия продвижения в поиске сайта',
     fullText: '',
   });
 
