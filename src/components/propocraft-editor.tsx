@@ -17,21 +17,21 @@ const defaultProposalText = (problems: Problem[]) => {
               `### ${p.title}\n${p.description}${p.screenshotUrl ? `\n\n<img src="${p.screenshotUrl}" alt="${p.title}" data-ai-hint="problem illustration" style="width: 100%; border-radius: 0.5rem; margin-top: 1rem;"/>` : ''}`
           )
           .join('\n\n')
-      : 'No specific problems have been identified in this section. We recommend a discovery session to outline key challenges and opportunities.';
+      : 'В этом разделе не было выявлено конкретных проблем. Мы рекомендуем провести ознакомительную сессию для определения ключевых задач и возможностей.';
 
-  return `## Introduction
-This document outlines a proposal for our collaborative project. We have analyzed your current situation and identified key areas where our expertise can provide significant value. Our goal is to deliver a robust solution that addresses your challenges and helps you achieve your objectives.
+  return `## Введение
+В этом документе изложено предложение по нашему совместному проекту. Мы проанализировали вашу текущую ситуацию и определили ключевые области, в которых наш опыт может принести значительную пользу. Наша цель — предоставить надежное решение, которое решит ваши проблемы и поможет достичь поставленных целей.
 
-## Identified Problems
-Based on our preliminary analysis, we have identified the following challenges that need to be addressed:
+## Выявленные проблемы
+На основе нашего предварительного анализа мы выявили следующие проблемы, которые необходимо решить:
 
 ${problemStatements}
 
-## Proposed Solution
-We propose a comprehensive solution that involves a multi-phased approach to tackle the identified problems. Our team of experts will work closely with you to ensure a seamless implementation and successful outcome. Further details on the specific deliverables and timeline will be provided upon acceptance of this proposal.
+## Предлагаемое решение
+Мы предлагаем комплексное решение, включающее многоэтапный подход к решению выявленных проблем. Наша команда экспертов будет тесно сотрудничать с вами, чтобы обеспечить беспрепятственное внедрение и успешный результат. Дальнейшие подробности о конкретных результатах и сроках будут предоставлены после принятия этого предложения.
 
-## Next Steps
-We are excited about the possibility of partnering with you. To move forward, we suggest a follow-up meeting to discuss this proposal in detail and answer any questions you may have.`;
+## Следующие шаги
+Мы рады возможности сотрудничества с вами. Чтобы двигаться дальше, мы предлагаем провести дополнительную встречу для детального обсуждения этого предложения и ответов на любые ваши вопросы.`;
 };
 
 export default function PropoCraftEditor() {
@@ -40,14 +40,14 @@ export default function PropoCraftEditor() {
 
   const [proposal, setProposal] = useState<Proposal>({
     clientName: 'Globex Corporation',
-    projectName: 'Digital Transformation Initiative',
+    projectName: 'Инициатива по цифровой трансформации',
     fullText: '',
   });
 
   const [branding, setBranding] = useState<Branding>({
     logoUrl: 'https://picsum.photos/seed/logo/200/100',
     accentColor: '#8E44AD',
-    companyName: 'Innovatech',
+    companyName: 'ИнноТех',
   });
 
   const [selectedProblems, setSelectedProblems] = useState<Problem[]>(() => [
@@ -70,14 +70,14 @@ export default function PropoCraftEditor() {
       if (result.success && result.text) {
         setProposal((prev) => ({ ...prev, fullText: result.text! }));
         toast({
-          title: 'Tone Adjusted',
-          description: `The proposal tone has been successfully set to "${tone}".`,
+          title: 'Тон настроен',
+          description: `Тон предложения успешно изменен на "${tone}".`,
         });
       } else {
         toast({
           variant: 'destructive',
-          title: 'Error',
-          description: result.error || 'Could not adjust the tone.',
+          title: 'Ошибка',
+          description: result.error || 'Не удалось настроить тон.',
         });
       }
     });

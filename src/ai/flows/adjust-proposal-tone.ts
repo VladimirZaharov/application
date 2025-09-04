@@ -13,18 +13,18 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const AdjustProposalToneInputSchema = z.object({
-  proposalText: z.string().describe('The proposal text to adjust.'),
+  proposalText: z.string().describe('Текст предложения для корректировки.'),
   desiredTone: z
     .string()
     .describe(
-      'The desired tone for the proposal (e.g., formal, informal, technical).'
+      'Желаемый тон для предложения (например, формальный, неформальный, технический).'
     ),
 });
 
 export type AdjustProposalToneInput = z.infer<typeof AdjustProposalToneInputSchema>;
 
 const AdjustProposalToneOutputSchema = z.object({
-  adjustedProposalText: z.string().describe('The proposal text with the adjusted tone.'),
+  adjustedProposalText: z.string().describe('Текст предложения с скорректированным тоном.'),
 });
 
 export type AdjustProposalToneOutput = z.infer<typeof AdjustProposalToneOutputSchema>;

@@ -13,7 +13,7 @@ export async function handleToneAdjustment(
   tone: string
 ): Promise<AdjustToneResult> {
   if (!currentText || !tone) {
-    return { success: false, error: 'Proposal text and tone are required.' };
+    return { success: false, error: 'Требуется текст предложения и тон.' };
   }
 
   try {
@@ -24,6 +24,6 @@ export async function handleToneAdjustment(
     return { success: true, text: result.adjustedProposalText };
   } catch (e) {
     console.error('AI tone adjustment failed:', e);
-    return { success: false, error: 'Failed to adjust tone. Please try again.' };
+    return { success: false, error: 'Не удалось настроить тон. Пожалуйста, попробуйте еще раз.' };
   }
 }

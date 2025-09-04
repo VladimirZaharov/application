@@ -120,38 +120,38 @@ export default function EditorSidebar({
               <AccordionTrigger className="px-4 text-base font-semibold">
                 <div className="flex items-center gap-2">
                   <Settings className="h-5 w-5" />
-                  Proposal Details
+                  Детали предложения
                 </div>
               </AccordionTrigger>
               <AccordionContent className="p-4 space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="companyName">Your Company Name</Label>
+                  <Label htmlFor="companyName">Название вашей компании</Label>
                   <Input
                     id="companyName"
                     name="companyName"
                     value={branding.companyName}
                     onChange={handleBrandingChange}
-                    placeholder="e.g., Innovate Solutions"
+                    placeholder="например, Innovate Solutions"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="clientName">Client Name</Label>
+                  <Label htmlFor="clientName">Имя клиента</Label>
                   <Input
                     id="clientName"
                     name="clientName"
                     value={proposal.clientName}
                     onChange={handleProposalChange}
-                    placeholder="e.g., Globex Corporation"
+                    placeholder="например, Globex Corporation"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="projectName">Project Name</Label>
+                  <Label htmlFor="projectName">Название проекта</Label>
                   <Input
                     id="projectName"
                     name="projectName"
                     value={proposal.projectName}
                     onChange={handleProposalChange}
-                    placeholder="e.g., Website Redesign"
+                    placeholder="например, Редизайн сайта"
                   />
                 </div>
               </AccordionContent>
@@ -161,12 +161,12 @@ export default function EditorSidebar({
               <AccordionTrigger className="px-4 text-base font-semibold">
                 <div className="flex items-center gap-2">
                   <Library className="h-5 w-5" />
-                  Problem Library
+                  Библиотека проблем
                 </div>
               </AccordionTrigger>
               <AccordionContent className="p-4 space-y-3">
                 <p className="text-sm text-muted-foreground">
-                  Select the problems this proposal will address.
+                  Выберите проблемы, которые будет решать это предложение.
                 </p>
                 {problemLibrary.map((problem) => (
                   <div key={problem.id} className="flex items-start space-x-2 p-2 rounded-md hover:bg-secondary transition-colors">
@@ -194,7 +194,7 @@ export default function EditorSidebar({
                 {selectedProblems.length > 0 && (
                   <>
                     <Separator className="my-4"/>
-                    <h4 className="font-semibold">Selected Problems</h4>
+                    <h4 className="font-semibold">Выбранные проблемы</h4>
                     <Accordion type="multiple" className="space-y-2">
                       {selectedProblems.map((problem) => (
                         <AccordionItem value={problem.id} key={problem.id} className='border-b-0'>
@@ -203,7 +203,7 @@ export default function EditorSidebar({
                           </AccordionTrigger>
                           <AccordionContent className="p-4 space-y-4">
                             <div className="space-y-2">
-                              <Label htmlFor={`desc-${problem.id}`}>Description</Label>
+                              <Label htmlFor={`desc-${problem.id}`}>Описание</Label>
                               <Textarea
                                 id={`desc-${problem.id}`}
                                 value={problem.description}
@@ -212,7 +212,7 @@ export default function EditorSidebar({
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor={`img-${problem.id}`}>Screenshot</Label>
+                              <Label htmlFor={`img-${problem.id}`}>Скриншот</Label>
                                {problem.screenshotUrl ? (
                                 <div className="relative">
                                   <img src={problem.screenshotUrl} alt="Screenshot" className="w-full h-auto rounded-md border" />
@@ -234,7 +234,7 @@ export default function EditorSidebar({
                                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                       <UploadCloud className="w-8 h-8 mb-2 text-muted-foreground" />
                                       <p className="mb-1 text-sm text-muted-foreground">
-                                        <span className="font-semibold">Click to upload</span>
+                                        <span className="font-semibold">Нажмите, чтобы загрузить</span>
                                       </p>
                                     </div>
                                     <Input id={`screenshot-${problem.id}`} type="file" className="hidden" accept="image/*" onChange={(e) => handleScreenshotUpload(problem.id, e)} />
@@ -255,14 +255,14 @@ export default function EditorSidebar({
               <AccordionTrigger className="px-4 text-base font-semibold">
                 <div className="flex items-center gap-2">
                   <Brush className="h-5 w-5" />
-                  Styling &amp; Tone
+                  Стиль и тон
                 </div>
               </AccordionTrigger>
               <AccordionContent className="p-4 space-y-6">
                 <div className="space-y-4">
-                   <h4 className="font-medium flex items-center gap-2"><ImageIcon className="w-4 h-4" /> Company Branding</h4>
+                   <h4 className="font-medium flex items-center gap-2"><ImageIcon className="w-4 h-4" /> Брендинг компании</h4>
                    <div className="space-y-2">
-                    <Label htmlFor="logoUrl">Logo URL</Label>
+                    <Label htmlFor="logoUrl">URL логотипа</Label>
                     <Input
                       id="logoUrl"
                       name="logoUrl"
@@ -272,7 +272,7 @@ export default function EditorSidebar({
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="accentColor">Accent Color</Label>
+                    <Label htmlFor="accentColor">Акцентный цвет</Label>
                     <div className="relative">
                       <Input
                         id="accentColor"
@@ -293,22 +293,22 @@ export default function EditorSidebar({
                 </div>
                 <Separator />
                 <div className="space-y-4">
-                  <h4 className="font-medium flex items-center gap-2"><Bot className="w-4 h-4" /> AI Tone Adjustment</h4>
+                  <h4 className="font-medium flex items-center gap-2"><Bot className="w-4 h-4" /> Настройка тона с помощью ИИ</h4>
                    <Select onValueChange={adjustTone} disabled={isAdjustingTone}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a tone..." />
+                      <SelectValue placeholder="Выберите тон..." />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="formal">Formal</SelectItem>
-                      <SelectItem value="casual">Casual</SelectItem>
-                      <SelectItem value="technical">Technical</SelectItem>
-                      <SelectItem value="persuasive">Persuasive</SelectItem>
+                      <SelectItem value="formal">Формальный</SelectItem>
+                      <SelectItem value="casual">Неформальный</SelectItem>
+                      <SelectItem value="technical">Технический</SelectItem>
+                      <SelectItem value="persuasive">Убедительный</SelectItem>
                     </SelectContent>
                   </Select>
                    {isAdjustingTone && (
                     <div className="flex items-center text-sm text-muted-foreground">
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Adjusting tone...
+                      Настройка тона...
                     </div>
                   )}
                 </div>
@@ -319,7 +319,7 @@ export default function EditorSidebar({
         <div className="p-4 border-t mt-auto">
           <Button onClick={handlePrint} className="w-full" size="lg">
             <Download className="mr-2 h-5 w-5" />
-            Download as PDF
+            Скачать как PDF
           </Button>
         </div>
       </Card>

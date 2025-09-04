@@ -69,17 +69,17 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
           <header className="flex justify-between items-start mb-12">
             <div>
               <h1 className="text-4xl font-bold font-headline" style={accentStyle}>
-                {proposal.projectName || 'Project Proposal'}
+                {proposal.projectName || 'Предложение по проекту'}
               </h1>
               <p className="text-muted-foreground text-lg mt-1">
-                Prepared for: {proposal.clientName || 'Valued Client'}
+                Подготовлено для: {proposal.clientName || 'Уважаемый клиент'}
               </p>
             </div>
             <div className="flex-shrink-0">
               {branding.logoUrl ? (
                 <Image
                   src={branding.logoUrl}
-                  alt="Company Logo"
+                  alt="Логотип компании"
                   width={140}
                   height={70}
                   className="object-contain"
@@ -88,7 +88,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
               ) : (
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <PropoCraftIcon className="w-6 h-6" />
-                  <span className="font-semibold">{branding.companyName || 'Your Company'}</span>
+                  <span className="font-semibold">{branding.companyName || 'Ваша компания'}</span>
                 </div>
               )}
             </div>
@@ -105,8 +105,8 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
                 renderContent(proposal.fullText)
               ) : (
                 <div className="text-center py-16 text-muted-foreground">
-                  <p>Your proposal content will appear here.</p>
-                  <p className="text-sm">Start by selecting problems from the library.</p>
+                  <p>Содержание вашего предложения появится здесь.</p>
+                  <p className="text-sm">Начните с выбора проблем из библиотеки.</p>
                 </div>
               )}
             </div>
@@ -114,7 +114,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
 
           <footer className="mt-16 pt-6 border-t text-center text-xs text-muted-foreground">
             <p>
-              {branding.companyName || 'Your Company'} | Generated with PropoCraft
+              {branding.companyName || 'Ваша компания'} | Создано с помощью PropoCraft
             </p>
             <p>{new Date().toLocaleDateString()}</p>
           </footer>
