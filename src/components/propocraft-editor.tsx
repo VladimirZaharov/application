@@ -8,14 +8,13 @@ import type { Branding, Problem, Proposal } from '@/lib/types';
 import EditorSidebar from './editor-sidebar';
 import PreviewPanel from './preview-panel';
 
-const defaultProposalText = (
-  problems: { title: string; description: string }[]
-) => {
+const defaultProposalText = (problems: Problem[]) => {
   const problemStatements =
     problems.length > 0
       ? problems
           .map(
-            (p) => `### ${p.title}\n${p.description}`
+            (p) =>
+              `### ${p.title}\n${p.description}${p.screenshotUrl ? `\n\n<img src="${p.screenshotUrl}" alt="${p.title}" data-ai-hint="problem illustration" style="width: 100%; border-radius: 0.5rem; margin-top: 1rem;"/>` : ''}`
           )
           .join('\n\n')
       : 'No specific problems have been identified in this section. We recommend a discovery session to outline key challenges and opportunities.';
@@ -52,8 +51,8 @@ export default function PropoCraftEditor() {
   });
 
   const [selectedProblems, setSelectedProblems] = useState<Problem[]>(() => [
-    problemLibrary[0],
-    problemLibrary[2],
+    { ...problemLibrary[0] },
+    { ...problemLibrary[2] },
   ]);
 
   useEffect(() => {

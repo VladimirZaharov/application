@@ -3,6 +3,7 @@ export interface Problem {
   title: string;
   category: string;
   description: string;
+  screenshotUrl?: string;
 }
 
 export interface Branding {

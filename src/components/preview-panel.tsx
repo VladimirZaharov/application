@@ -18,6 +18,50 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
     borderColor: branding.accentColor,
   } as CSSProperties;
 
+  const createMarkup = (htmlString: string) => {
+    return { __html: htmlString };
+  };
+
+  const renderContent = (text: string) => {
+    const lines = text.split('\n');
+    const elements = [];
+    let currentParagraphs: string[] = [];
+  
+    const flushParagraphs = () => {
+      if (currentParagraphs.length > 0) {
+        elements.push(<p key={`p-${elements.length}`} dangerouslySetInnerHTML={createMarkup(currentParagraphs.join('<br />'))}></p>);
+        currentParagraphs = [];
+      }
+    };
+  
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (line.startsWith('### ')) {
+        flushParagraphs();
+        elements.push(<h3 key={`h3-${i}`} className="font-headline" style={{ color: branding.accentColor }}>{line.substring(4)}</h3>);
+      } else if (line.startsWith('## ')) {
+        flushParagraphs();
+        elements.push(<h2 key={`h2-${i}`} className="font-headline" style={{ color: branding.accentColor }}>{line.substring(3)}</h2>);
+      } else if (line.startsWith('# ')) {
+        flushParagraphs();
+        elements.push(<h1 key={`h1-${i}`} className="font-headline" style={{ color: branding.accentColor }}>{line.substring(2)}</h1>);
+      } else if (line.startsWith('<img')) {
+        flushParagraphs();
+        elements.push(<div key={`img-div-${i}`} dangerouslySetInnerHTML={createMarkup(line)} />);
+      }
+      else {
+        // Allow empty lines to create paragraph breaks
+        if(line.trim() === '') {
+            flushParagraphs();
+        } else {
+            currentParagraphs.push(line);
+        }
+      }
+    }
+    flushParagraphs();
+    return elements;
+  };
+
   return (
     <main className="flex-1 p-4 sm:p-6 md:p-10 bg-muted/40 print-container">
       <Card className="w-full max-w-4xl mx-auto shadow-xl print-content" id="proposal-preview">
@@ -58,18 +102,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
               style={{ '--tw-prose-headings': branding.accentColor } as CSSProperties}
             >
               {proposal.fullText ? (
-                proposal.fullText.split('\n').map((paragraph, index) => {
-                  if (paragraph.startsWith('### ')) {
-                    return <h3 key={index} className="font-headline" style={{color: branding.accentColor}}>{paragraph.substring(4)}</h3>;
-                  }
-                  if (paragraph.startsWith('## ')) {
-                    return <h2 key={index} className="font-headline" style={{color: branding.accentColor}}>{paragraph.substring(3)}</h2>;
-                  }
-                   if (paragraph.startsWith('# ')) {
-                    return <h1 key={index} className="font-headline" style={{color: branding.accentColor}}>{paragraph.substring(2)}</h1>;
-                  }
-                  return <p key={index}>{paragraph}</p>;
-                })
+                renderContent(proposal.fullText)
               ) : (
                 <div className="text-center py-16 text-muted-foreground">
                   <p>Your proposal content will appear here.</p>

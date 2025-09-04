@@ -9,6 +9,8 @@ import {
   Library,
   Loader2,
   Settings,
+  UploadCloud,
+  X,
 } from 'lucide-react';
 import {
   Accordion,
@@ -32,6 +34,7 @@ import { Separator } from '@/components/ui/separator';
 import { problemLibrary } from '@/lib/data';
 import type { Branding, Problem, Proposal } from '@/lib/types';
 import { PropoCraftIcon } from './icons';
+import { Textarea } from './ui/textarea';
 
 interface EditorSidebarProps {
   proposal: Proposal;
@@ -56,8 +59,32 @@ export default function EditorSidebar({
 }: EditorSidebarProps) {
   const handleProblemSelection = (problem: Problem, checked: boolean) => {
     setSelectedProblems((prev) =>
-      checked ? [...prev, problem] : prev.filter((p) => p.id !== problem.id)
+      checked ? [...prev, { ...problem }] : prev.filter((p) => p.id !== problem.id)
     );
+  };
+
+  const handleProblemUpdate = (
+    id: string,
+    field: keyof Problem,
+    value: string
+  ) => {
+    setSelectedProblems((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, [field]: value } : p))
+    );
+  };
+
+  const handleScreenshotUpload = (
+    id: string,
+    e: ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        handleProblemUpdate(id, 'screenshotUrl', reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleBrandingChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -144,7 +171,7 @@ export default function EditorSidebar({
                 {problemLibrary.map((problem) => (
                   <div key={problem.id} className="flex items-start space-x-2 p-2 rounded-md hover:bg-secondary transition-colors">
                     <Checkbox
-                      id={problem.id}
+                      id={`lib-${problem.id}`}
                       checked={selectedProblems.some((p) => p.id === problem.id)}
                       onCheckedChange={(checked) =>
                         handleProblemSelection(problem, !!checked)
@@ -152,7 +179,7 @@ export default function EditorSidebar({
                     />
                     <div className="grid gap-1.5 leading-none">
                       <label
-                        htmlFor={problem.id}
+                        htmlFor={`lib-${problem.id}`}
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
                         {problem.title}
@@ -163,6 +190,64 @@ export default function EditorSidebar({
                     </div>
                   </div>
                 ))}
+                
+                {selectedProblems.length > 0 && (
+                  <>
+                    <Separator className="my-4"/>
+                    <h4 className="font-semibold">Selected Problems</h4>
+                    <Accordion type="multiple" className="space-y-2">
+                      {selectedProblems.map((problem) => (
+                        <AccordionItem value={problem.id} key={problem.id} className='border-b-0'>
+                          <AccordionTrigger className="p-2 text-sm font-medium hover:bg-secondary rounded-md">
+                            {problem.title}
+                          </AccordionTrigger>
+                          <AccordionContent className="p-4 space-y-4">
+                            <div className="space-y-2">
+                              <Label htmlFor={`desc-${problem.id}`}>Description</Label>
+                              <Textarea
+                                id={`desc-${problem.id}`}
+                                value={problem.description}
+                                onChange={(e) => handleProblemUpdate(problem.id, 'description', e.target.value)}
+                                rows={4}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor={`img-${problem.id}`}>Screenshot</Label>
+                               {problem.screenshotUrl ? (
+                                <div className="relative">
+                                  <img src={problem.screenshotUrl} alt="Screenshot" className="w-full h-auto rounded-md border" />
+                                  <Button
+                                    variant="destructive"
+                                    size="icon"
+                                    className="absolute top-2 right-2 h-7 w-7"
+                                    onClick={() => handleProblemUpdate(problem.id, 'screenshotUrl', '')}
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              ) : (
+                                <div className="flex items-center justify-center w-full">
+                                  <Label
+                                    htmlFor={`screenshot-${problem.id}`}
+                                    className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-lg cursor-pointer bg-secondary hover:bg-muted"
+                                  >
+                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                      <UploadCloud className="w-8 h-8 mb-2 text-muted-foreground" />
+                                      <p className="mb-1 text-sm text-muted-foreground">
+                                        <span className="font-semibold">Click to upload</span>
+                                      </p>
+                                    </div>
+                                    <Input id={`screenshot-${problem.id}`} type="file" className="hidden" accept="image/*" onChange={(e) => handleScreenshotUpload(problem.id, e)} />
+                                  </Label>
+                                </div>
+                              )}
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  </>
+                )}
               </AccordionContent>
             </AccordionItem>
 
