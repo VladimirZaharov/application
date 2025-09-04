@@ -47,7 +47,7 @@ export default function PropoCraftEditor() {
   const [branding, setBranding] = useState<Branding>({
     logoUrl: 'https://picsum.photos/seed/logo/200/100',
     accentColor: '#8E44AD',
-    companyName: 'ИнноТех',
+    companyName: 'ПОИСКОВАЯ ИНДУСТРИЯ',
   });
 
   const [selectedProblems, setSelectedProblems] = useState<Problem[]>(() => [
