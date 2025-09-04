@@ -137,6 +137,15 @@ export default function EditorSidebar({
     window.print();
   };
 
+  const problemsByCategory = problemLibrary.reduce((acc, problem) => {
+    const { category } = problem;
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(problem);
+    return acc;
+  }, {} as Record<string, Problem[]>);
+
   return (
     <aside className="no-print w-full max-w-sm flex-shrink-0">
       <Card className="h-full max-h-screen flex flex-col rounded-none border-r border-l-0 border-t-0 border-b-0 shadow-none">
@@ -204,26 +213,28 @@ export default function EditorSidebar({
                 <p className="text-sm text-muted-foreground">
                   Выберите проблемы, которые будет решать это предложение.
                 </p>
-                {problemLibrary.map((problem) => (
-                  <div key={problem.id} className="flex items-start space-x-2 p-2 rounded-md hover:bg-secondary transition-colors">
-                    <Checkbox
-                      id={`lib-${problem.id}`}
-                      checked={selectedProblems.some((p) => p.id === problem.id)}
-                      onCheckedChange={(checked) =>
-                        handleProblemSelection(problem, !!checked)
-                      }
-                    />
-                    <div className="grid gap-1.5 leading-none">
-                      <label
-                        htmlFor={`lib-${problem.id}`}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        {problem.title}
-                      </label>
-                      <p className="text-xs text-muted-foreground">
-                        {problem.category}
-                      </p>
-                    </div>
+                {Object.entries(problemsByCategory).map(([category, problems]) => (
+                  <div key={category} className="space-y-2">
+                    <h4 className="font-semibold text-sm text-primary">{category}</h4>
+                    {problems.map((problem) => (
+                      <div key={problem.id} className="flex items-start space-x-2 p-2 rounded-md hover:bg-secondary transition-colors">
+                        <Checkbox
+                          id={`lib-${problem.id}`}
+                          checked={selectedProblems.some((p) => p.id === problem.id)}
+                          onCheckedChange={(checked) =>
+                            handleProblemSelection(problem, !!checked)
+                          }
+                        />
+                        <div className="grid gap-1.5 leading-none">
+                          <label
+                            htmlFor={`lib-${problem.id}`}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {problem.title}
+                          </label>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 ))}
                 
