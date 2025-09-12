@@ -8,7 +8,10 @@ import type { Branding, Problem, Proposal } from '@/lib/types';
 import EditorSidebar from './editor-sidebar';
 import PreviewPanel from './preview-panel';
 
-const defaultProposalText = (problems: Problem[]) => {
+const defaultProposalText = (
+  problems: Problem[],
+  growthPointsText: string
+) => {
   if (problems.length === 0) {
     return `## Введение
 В этом документе изложено предложение по нашему совместному проекту. Мы проанализировали вашу текущую ситуацию и определили ключевые области, в которых наш опыт может принести значительную пользу. Наша цель — предоставить надежное решение, которое решит ваши проблемы и поможет достичь поставленных целей.
@@ -16,8 +19,8 @@ const defaultProposalText = (problems: Problem[]) => {
 ## Выявленные проблемы
 В этом разделе не было выявлено конкретных проблем. Мы рекомендуем провести ознакомительную сессию для определения ключевых задач и возможностей.
 
-## Предлагаемое решение
-Мы предлагаем комплексное решение, включающее многоэтапный подход к решению выявленных проблем. Наша команда экспертов будет тесно сотрудничать с вами, чтобы обеспечить беспрепятственное внедрение и успешный результат. Дальнейшие подробности о конкретных результатах и сроках будут предоставлены после принятия этого предложения.
+## Точки роста
+${growthPointsText}
 
 ## Следующие шаги
 Мы рады возможности сотрудничества с вами. Чтобы двигаться дальше, мы предлагаем провести дополнительную встречу для детального обсуждения этого предложения и ответов на любые ваши вопросы.`;
@@ -46,8 +49,8 @@ const defaultProposalText = (problems: Problem[]) => {
 
 ${problemStatements}
 
-## Предлагаемое решение
-Мы предлагаем комплексное решение, включающее многоэтапный подход к решению выявленных проблем. Наша команда экспертов будет тесно сотрудничать с вами, чтобы обеспечить беспрепятственное внедрение и успешный результат. Дальнейшие подробности о конкретных результатах и сроках будут предоставлены после принятия этого предложения.
+## Точки роста
+${growthPointsText}
 
 ## Следующие шаги
 Мы рады возможности сотрудничества с вами. Чтобы двигаться дальше, мы предлагаем провести дополнительную встречу для детального обсуждения этого предложения и ответов на любые ваши вопросы.`;
@@ -74,12 +77,16 @@ export default function PropoCraftEditor() {
     { ...problemLibrary[2] },
   ]);
 
+  const [growthPointsText, setGrowthPointsText] = useState<string>(
+    `Мы предлагаем комплексное решение, включающее многоэтапный подход к решению выявленных проблем. Наша команда экспертов будет тесно сотрудничать с вами, чтобы обеспечить беспрепятственное внедрение и успешный результат. Дальнейшие подробности о конкретных результатах и сроках будут предоставлены после принятия этого предложения.`
+  );
+
   useEffect(() => {
     setProposal((prev) => ({
       ...prev,
-      fullText: defaultProposalText(selectedProblems),
+      fullText: defaultProposalText(selectedProblems, growthPointsText),
     }));
-  }, [selectedProblems]);
+  }, [selectedProblems, growthPointsText]);
 
   const adjustTone = async (tone: string) => {
     if (!tone) return;
@@ -113,6 +120,8 @@ export default function PropoCraftEditor() {
         setSelectedProblems={setSelectedProblems}
         adjustTone={adjustTone}
         isAdjustingTone={isAdjustingTone}
+        growthPointsText={growthPointsText}
+        setGrowthPointsText={setGrowthPointsText}
       />
       <PreviewPanel proposal={proposal} branding={branding} />
     </div>

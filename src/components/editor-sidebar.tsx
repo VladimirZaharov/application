@@ -8,6 +8,7 @@ import {
   Image as ImageIcon,
   Library,
   Loader2,
+  TrendingUp,
   Settings,
   UploadCloud,
   X,
@@ -45,6 +46,8 @@ interface EditorSidebarProps {
   setSelectedProblems: Dispatch<SetStateAction<Problem[]>>;
   adjustTone: (tone: string) => Promise<void>;
   isAdjustingTone: boolean;
+  growthPointsText: string;
+  setGrowthPointsText: Dispatch<SetStateAction<string>>;
 }
 
 export default function EditorSidebar({
@@ -56,6 +59,8 @@ export default function EditorSidebar({
   setSelectedProblems,
   adjustTone,
   isAdjustingTone,
+  growthPointsText,
+  setGrowthPointsText,
 }: EditorSidebarProps) {
   const handleProblemSelection = (problem: Problem, checked: boolean) => {
     setSelectedProblems((prev) =>
@@ -269,6 +274,27 @@ export default function EditorSidebar({
                     </Accordion>
                   </>
                 )}
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="growth-points">
+              <AccordionTrigger className="px-4 text-base font-semibold">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Точки роста
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-4 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="growth-points-content">Содержание</Label>
+                  <Textarea
+                    id="growth-points-content"
+                    value={growthPointsText}
+                    onChange={(e) => setGrowthPointsText(e.target.value)}
+                    rows={8}
+                    placeholder="Опишите здесь предлагаемое решение и точки роста..."
+                  />
+                </div>
               </AccordionContent>
             </AccordionItem>
 
