@@ -5,13 +5,12 @@ import {
   Bot,
   Brush,
   Download,
-  Image as ImageIcon,
+  FileText,
+  ImageIcon,
   Library,
   Loader2,
-  TrendingUp,
   Settings,
-  UploadCloud,
-  X,
+  TrendingUp,
 } from 'lucide-react';
 import {
   Accordion,
@@ -46,6 +45,8 @@ interface EditorSidebarProps {
   setSelectedProblems: Dispatch<SetStateAction<Problem[]>>;
   adjustTone: (tone: string) => Promise<void>;
   isAdjustingTone: boolean;
+  auditGoalText: string;
+  setAuditGoalText: Dispatch<SetStateAction<string>>;
   growthPointsText: string;
   setGrowthPointsText: Dispatch<SetStateAction<string>>;
 }
@@ -59,6 +60,8 @@ export default function EditorSidebar({
   setSelectedProblems,
   adjustTone,
   isAdjustingTone,
+  auditGoalText,
+  setAuditGoalText,
   growthPointsText,
   setGrowthPointsText,
 }: EditorSidebarProps) {
@@ -163,7 +166,7 @@ export default function EditorSidebar({
         <CardContent className="p-0 flex-grow overflow-y-auto">
           <Accordion
             type="multiple"
-            defaultValue={['settings', 'content', 'style']}
+            defaultValue={['settings', 'content', 'style', 'audit-goal']}
             className="w-full"
           >
             <AccordionItem value="settings">
@@ -202,6 +205,27 @@ export default function EditorSidebar({
                     value={proposal.projectName}
                     onChange={handleProposalChange}
                     placeholder="например, Редизайн сайта"
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+             <AccordionItem value="audit-goal">
+              <AccordionTrigger className="px-4 text-base font-semibold">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Цель аудита
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-4 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="audit-goal-content">Содержание</Label>
+                  <Textarea
+                    id="audit-goal-content"
+                    value={auditGoalText}
+                    onChange={(e) => setAuditGoalText(e.target.value)}
+                    rows={8}
+                    placeholder="Опишите здесь цель аудита..."
                   />
                 </div>
               </AccordionContent>

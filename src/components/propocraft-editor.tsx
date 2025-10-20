@@ -9,43 +9,34 @@ import EditorSidebar from './editor-sidebar';
 import PreviewPanel from './preview-panel';
 
 const defaultProposalText = (
+  auditGoalText: string,
   problems: Problem[],
   growthPointsText: string
 ) => {
-  if (problems.length === 0) {
-    return `## Введение
-В этом документе изложено предложение по нашему совместному проекту. Мы проанализировали вашу текущую ситуацию и определили ключевые области, в которых наш опыт может принести значительную пользу. Наша цель — предоставить надежное решение, которое решит ваши проблемы и поможет достичь поставленных целей.
+  const problemStatements =
+    problems.length > 0
+      ? Object.entries(
+          problems.reduce((acc, problem) => {
+            const { category } = problem;
+            if (!acc[category]) {
+              acc[category] = [];
+            }
+            acc[category].push(problem);
+            return acc;
+          }, {} as Record<string, Problem[]>)
+        )
+          .map(([category, problems]) => {
+            const problemContent = problems
+              .map((p) => `### ${p.title}\n${p.content}`)
+              .join('\n\n');
+            return `## ${category}\n${problemContent}`;
+          })
+          .join('\n\n')
+      : `## Выявленные проблемы
+В этом разделе не было выявлено конкретных проблем. Мы рекомендуем провести ознакомительную сессию для определения ключевых задач и возможностей.`;
 
-## Выявленные проблемы
-В этом разделе не было выявлено конкретных проблем. Мы рекомендуем провести ознакомительную сессию для определения ключевых задач и возможностей.
-
-## Точки роста
-${growthPointsText}
-
-## Следующие шаги
-Мы рады возможности сотрудничества с вами. Чтобы двигаться дальше, мы предлагаем провести дополнительную встречу для детального обсуждения этого предложения и ответов на любые ваши вопросы.`;
-  }
-  
-  const problemsByCategory = problems.reduce((acc, problem) => {
-    const { category } = problem;
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(problem);
-    return acc;
-  }, {} as Record<string, Problem[]>);
-
-  const problemStatements = Object.entries(problemsByCategory)
-    .map(([category, problems]) => {
-      const problemContent = problems
-        .map((p) => `### ${p.title}\n${p.content}`)
-        .join('\n\n');
-      return `## ${category}\n${problemContent}`;
-    })
-    .join('\n\n');
-
-  return `## Введение
-В этом документе изложено предложение по нашему совместному проекту. Мы проанализировали вашу текущую ситуацию и определили ключевые области, в которых наш опыт может принести значительную пользу. Наша цель — предоставить надежное решение, которое решит ваши проблемы и поможет достичь поставленных целей.
+  return `## Цель аудита
+${auditGoalText}
 
 ${problemStatements}
 
@@ -77,6 +68,10 @@ export default function PropoCraftEditor() {
     { ...problemLibrary[2] },
   ]);
 
+  const [auditGoalText, setAuditGoalText] = useState<string>(
+    'В этом документе изложено предложение по нашему совместному проекту. Мы проанализировали вашу текущую ситуацию и определили ключевые области, в которых наш опыт может принести значительную пользу. Наша цель — предоставить надежное решение, которое решит ваши проблемы и поможет достичь поставленных целей.'
+  );
+
   const [growthPointsText, setGrowthPointsText] = useState<string>(
     `Мы предлагаем комплексное решение, включающее многоэтапный подход к решению выявленных проблем. Наша команда экспертов будет тесно сотрудничать с вами, чтобы обеспечить беспрепятственное внедрение и успешный результат. Дальнейшие подробности о конкретных результатах и сроках будут предоставлены после принятия этого предложения.`
   );
@@ -84,9 +79,9 @@ export default function PropoCraftEditor() {
   useEffect(() => {
     setProposal((prev) => ({
       ...prev,
-      fullText: defaultProposalText(selectedProblems, growthPointsText),
+      fullText: defaultProposalText(auditGoalText, selectedProblems, growthPointsText),
     }));
-  }, [selectedProblems, growthPointsText]);
+  }, [auditGoalText, selectedProblems, growthPointsText]);
 
   const adjustTone = async (tone: string) => {
     if (!tone) return;
@@ -120,6 +115,8 @@ export default function PropoCraftEditor() {
         setSelectedProblems={setSelectedProblems}
         adjustTone={adjustTone}
         isAdjustingTone={isAdjustingTone}
+        auditGoalText={auditGoalText}
+        setAuditGoalText={setAuditGoalText}
         growthPointsText={growthPointsText}
         setGrowthPointsText={setGrowthPointsText}
       />
