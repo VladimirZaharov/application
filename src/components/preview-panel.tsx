@@ -15,6 +15,7 @@ interface PreviewPanelProps {
 export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) {
   const accentStyle = {
     borderColor: branding.accentColor,
+    color: '#2D4777',
   } as CSSProperties;
 
   const createMarkup = (htmlString: string) => {
@@ -40,7 +41,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
         elements.push(<h3 key={`h3-${i}`} className="text-xl font-semibold font-headline mt-6 mb-2">{line.substring(4)}</h3>);
       } else if (line.startsWith('## ')) {
         flushParagraphs();
-        elements.push(<h2 key={`h2-${i}`} className="text-2xl font-bold font-headline mt-8 mb-4 pb-2 border-b" style={{...accentStyle, color: '#2D4777'}}>{line.substring(3)}</h2>);
+        elements.push(<h2 key={`h2-${i}`} className="text-2xl font-bold font-headline mt-8 mb-4 pb-2 border-b" style={accentStyle}>{line.substring(3)}</h2>);
       } else if (line.startsWith('# ')) {
         flushParagraphs();
         elements.push(<h1 key={`h1-${i}`} className="text-3xl font-bold font-headline">{line.substring(2)}</h1>);
@@ -72,8 +73,15 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
     <main className="flex-1 p-4 sm:p-6 md:p-10 bg-transparent print-container">
       <Card className="w-full max-w-4xl mx-auto shadow-xl print-content relative overflow-hidden" id="proposal-preview">
          <div className="absolute inset-0" style={cardStyle}></div>
-         <CardContent className="p-8 md:p-12 relative bg-card/90">
-          <header className="mb-12 text-center">
+         <div className="absolute top-0 right-0 bottom-0 w-16 flex items-center justify-center overflow-hidden pointer-events-none">
+            <div className="whitespace-nowrap opacity-10 transform -rotate-90 text-2xl font-bold uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.5em'}}>
+                {Array(5).fill(null).map((_, i) => (
+                    <span key={i} className="inline-block mx-8">{branding.companyName}</span>
+                ))}
+            </div>
+         </div>
+         <CardContent className="p-8 md:p-12 relative bg-card/95">
+          <header className="mb-12">
              <div className="mb-8">
               {branding.logoUrl ? (
                 <Image
@@ -85,13 +93,13 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
                   data-ai-hint="company logo"
                 />
               ) : (
-                <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                <div className="flex items-center justify-center gap-2 text-muted-foreground h-[80px]">
                   <PropoCraftIcon className="w-6 h-6" />
                   <span className="font-semibold">{branding.companyName || 'Ваша компания'}</span>
                 </div>
               )}
             </div>
-            <div>
+            <div className="text-center">
               <h1 className="text-4xl font-bold font-headline" style={{ color: '#2D4777' }}>
                 {proposal.projectName || 'Предложение по проекту'}
               </h1>
