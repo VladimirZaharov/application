@@ -61,23 +61,24 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
     return elements;
   };
   
-  const circlePattern = `
-    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  const imagePattern = `
+    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <defs>
-        <pattern id="circles" patternUnits="userSpaceOnUse" width="21cm" height="29.7cm">
-          <circle cx="5cm" cy="5cm" r="2cm" fill="hsl(var(--background))" opacity="0.05"/>
-          <circle cx="15cm" cy="8cm" r="1cm" fill="hsl(var(--background))" opacity="0.06"/>
-          <circle cx="8cm" cy="18cm" r="2cm" fill="hsl(var(--background))" opacity="0.04"/>
-          <circle cx="18cm" cy="22cm" r="1cm" fill="hsl(var(--background))" opacity="0.07"/>
-          <circle cx="3cm" cy="25cm" r="2cm" fill="hsl(var(--background))" opacity="0.05"/>
+        <pattern id="logoPattern" patternUnits="userSpaceOnUse" width="21cm" height="29.7cm">
+          <image xlink:href="https://searchindustrial.ru/img/Logo_dark.png" x="-1.25cm" y="2cm" width="2.5cm" height="2.5cm" opacity="0.5" />
+          <image xlink:href="https://searchindustrial.ru/img/Logo_dark.png" x="18cm" y="5cm" width="4.5cm" height="4.5cm" opacity="0.5" />
+          <image xlink:href="https://searchindustrial.ru/img/Logo_dark.png" x="2cm" y="12cm" width="2.5cm" height="2.5cm" opacity="0.5" />
+          <image xlink:href="https://searchindustrial.ru/img/Logo_dark.png" x="15cm" y="18cm" width="4.5cm" height="4.5cm" opacity="0.5" />
+          <image xlink:href="https://searchindustrial.ru/img/Logo_dark.png" x="-0.5cm" y="24cm" width="2.5cm" height="2.5cm" opacity="0.5" />
+          <image xlink:href="https://searchindustrial.ru/img/Logo_dark.png" x="19cm" y="28cm" width="4.5cm" height="4.5cm" opacity="0.5" />
         </pattern>
       </defs>
-      <rect width="100%" height="100%" fill="url(#circles)"/>
+      <rect width="100%" height="100%" fill="url(#logoPattern)"/>
     </svg>
   `;
 
   const cardStyle = {
-    backgroundImage: branding.backgroundUrl ? `url(${branding.backgroundUrl})` : `url("data:image/svg+xml,${encodeURIComponent(circlePattern)}")`,
+    backgroundImage: branding.backgroundUrl ? `url(${branding.backgroundUrl})` : `url("data:image/svg+xml,${encodeURIComponent(imagePattern)}")`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
   };
