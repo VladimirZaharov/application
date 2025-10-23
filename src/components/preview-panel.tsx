@@ -71,15 +71,8 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
 
   return (
     <main className="flex-1 p-4 sm:p-6 md:p-10 bg-transparent print-container">
-      <Card className="w-full max-w-4xl mx-auto shadow-xl print-content relative overflow-hidden" id="proposal-preview">
+      <Card className="w-full max-w-4xl mx-auto shadow-xl print-content" id="proposal-preview">
          <div className="absolute inset-0" style={cardStyle}></div>
-         <div className="absolute top-0 right-0 bottom-0 w-16 flex items-center justify-center overflow-hidden pointer-events-none">
-            <div className="whitespace-nowrap opacity-10 transform -rotate-90 text-2xl font-bold uppercase tracking-widest text-gray-400" style={{ letterSpacing: '0.5em'}}>
-                {Array(5).fill(null).map((_, i) => (
-                    <span key={i} className="inline-block mx-8">{branding.companyName}</span>
-                ))}
-            </div>
-         </div>
          <CardContent className="p-8 md:p-12 relative bg-card/95">
           <header className="mb-12">
              <div className="mb-8">
