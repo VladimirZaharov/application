@@ -65,11 +65,12 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
   const circlePattern = `
     <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <pattern id="circles" patternUnits="userSpaceOnUse" width="1200" height="1200">
-          <circle cx="200" cy="200" r="80" fill="hsl(var(--background))" opacity="0.08"/>
-          <circle cx="800" cy="700" r="120" fill="hsl(var(--background))" opacity="0.06"/>
-          <circle cx="400" cy="900" r="60" fill="hsl(var(--background))" opacity="0.09"/>
-          <circle cx="1100" cy="300" r="70" fill="hsl(var(--background))" opacity="0.07"/>
+        <pattern id="circles" patternUnits="userSpaceOnUse" width="800" height="1100">
+          <circle cx="150" cy="180" r="50" fill="hsl(var(--background))" opacity="0.07"/>
+          <circle cx="650" cy="300" r="70" fill="hsl(var(--background))" opacity="0.05"/>
+          <circle cx="300" cy="600" r="40" fill="hsl(var(--background))" opacity="0.08"/>
+          <circle cx="700" cy="850" r="90" fill="hsl(var(--background))" opacity="0.06"/>
+          <circle cx="80" cy="1000" r="30" fill="hsl(var(--background))" opacity="0.07"/>
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill="url(#circles)"/>
