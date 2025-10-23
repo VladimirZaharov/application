@@ -71,24 +71,16 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
 
   return (
     <main className="flex-1 p-4 sm:p-6 md:p-10 bg-transparent print-container relative">
-      <div 
-        className="absolute top-0 right-4 h-full w-20 bg-repeat-y opacity-20"
-        style={{
-          backgroundImage: `url(https://searchindustrial.ru/img/Logo_dark_text.png)`,
-          backgroundSize: 'contain',
-          backgroundPosition: 'center top',
-        }}
-      ></div>
       <Card className="w-full max-w-4xl mx-auto shadow-xl print-content" id="proposal-preview">
          <div className="absolute inset-0" style={cardStyle}></div>
          <CardContent className="p-8 md:p-12 relative bg-card/95">
           <header className="mb-12">
-             <div className="mb-8">
+             <div className="mb-8 h-[80px] flex items-center justify-center">
               {branding.logoUrl ? (
                 <Image
                   src={branding.logoUrl}
                   alt="Логотип компании"
-                  width={1200}
+                  width={400}
                   height={80}
                   className="object-contain mx-auto"
                   data-ai-hint="company logo"
