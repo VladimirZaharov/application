@@ -65,12 +65,12 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
   const circlePattern = `
     <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <pattern id="circles" patternUnits="userSpaceOnUse" width="800" height="1100">
-          <circle cx="150" cy="180" r="50" fill="hsl(var(--background))" opacity="0.07"/>
-          <circle cx="650" cy="300" r="70" fill="hsl(var(--background))" opacity="0.05"/>
-          <circle cx="300" cy="600" r="40" fill="hsl(var(--background))" opacity="0.08"/>
-          <circle cx="700" cy="850" r="90" fill="hsl(var(--background))" opacity="0.06"/>
-          <circle cx="80" cy="1000" r="30" fill="hsl(var(--background))" opacity="0.07"/>
+        <pattern id="circles" patternUnits="userSpaceOnUse" width="21cm" height="29.7cm">
+          <circle cx="5cm" cy="5cm" r="2cm" fill="hsl(var(--background))" opacity="0.05"/>
+          <circle cx="15cm" cy="8cm" r="1cm" fill="hsl(var(--background))" opacity="0.06"/>
+          <circle cx="8cm" cy="18cm" r="2cm" fill="hsl(var(--background))" opacity="0.04"/>
+          <circle cx="18cm" cy="22cm" r="1cm" fill="hsl(var(--background))" opacity="0.07"/>
+          <circle cx="3cm" cy="25cm" r="2cm" fill="hsl(var(--background))" opacity="0.05"/>
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill="url(#circles)"/>
