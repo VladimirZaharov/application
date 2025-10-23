@@ -59,7 +59,7 @@ export default function PropoCraftEditor() {
 
   const [branding, setBranding] = useState<Branding>({
     logoUrl: '/logo.png',
-    accentColor: '#2D4777',
+    accentColor: '#FFC502',
     companyName: 'ПОИСКОВАЯ ИНДУСТРИЯ',
     backgroundUrl: '',
   });
