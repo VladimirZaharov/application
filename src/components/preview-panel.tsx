@@ -95,7 +95,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
                 <Image
                   src={branding.logoUrl}
                   alt="Логотип компании"
-                  width={300}
+                  width={600}
                   height={80}
                   className="object-contain mx-auto"
                   data-ai-hint="company logo"
@@ -122,7 +122,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
           <section>
             <div
               className="prose prose-lg max-w-none"
-              style={{ '--tw-prose-headings': branding.accentColor } as CSSProperties}
+              style={{ '--tw-prose-headings': branding.accentColor, color: '#2D4777' } as CSSProperties}
             >
               {proposal.fullText ? (
                 renderContent(proposal.fullText)
