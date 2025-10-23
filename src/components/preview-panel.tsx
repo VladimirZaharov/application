@@ -91,7 +91,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
          <CardContent className="p-8 md:p-12 relative bg-card/90">
           <header className="flex justify-between items-start mb-12">
             <div>
-              <h1 className="text-4xl font-bold font-headline" style={accentStyle}>
+              <h1 className="text-4xl font-bold font-headline" style={{ color: branding.accentColor }}>
                 {proposal.projectName || 'Предложение по проекту'}
               </h1>
               <p className="text-muted-foreground text-lg mt-1">

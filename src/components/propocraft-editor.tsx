@@ -58,7 +58,7 @@ export default function PropoCraftEditor() {
   });
 
   const [branding, setBranding] = useState<Branding>({
-    logoUrl: '/logo.png',
+    logoUrl: 'https://searchindustrial.ru/img1/icons/logo-text.svg',
     accentColor: '#FFC502',
     companyName: 'ПОИСКОВАЯ ИНДУСТРИЯ',
     backgroundUrl: '',
