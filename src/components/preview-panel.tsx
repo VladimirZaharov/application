@@ -74,13 +74,26 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
       <Card className="w-full max-w-4xl mx-auto shadow-xl print-content" id="proposal-preview">
          <div className="absolute inset-0" style={cardStyle}></div>
          <CardContent className="p-8 md:p-12 relative bg-card/95">
+          <div className="absolute top-0 right-8 bottom-0 flex flex-col justify-around h-full py-4 pointer-events-none">
+              {Array.from({ length: 10 }).map((_, i) => (
+                <div key={i} style={{ marginBottom: '25px' }}>
+                  <Image
+                    src="https://searchindustrial.ru/img/Logo_dark_text.png"
+                    alt="Watermark"
+                    width={100}
+                    height={20}
+                    className="object-contain opacity-10"
+                  />
+                </div>
+              ))}
+            </div>
           <header className="mb-12">
              <div className="mb-8 h-[80px] flex items-center justify-center">
               {branding.logoUrl ? (
                 <Image
                   src={branding.logoUrl}
                   alt="Логотип компании"
-                  width={400}
+                  width={800}
                   height={80}
                   className="object-contain mx-auto"
                   data-ai-hint="company logo"
