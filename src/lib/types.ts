@@ -9,6 +9,7 @@ export interface Branding {
   logoUrl: string;
   accentColor: string;
   companyName: string;
+  backgroundUrl: string;
 }
 
 export interface Proposal {

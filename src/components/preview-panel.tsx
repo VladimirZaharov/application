@@ -65,11 +65,11 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
   const circlePattern = `
     <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <pattern id="circles" patternUnits="userSpaceOnUse" width="400" height="400">
-          <circle cx="50" cy="50" r="35" fill="hsl(var(--background))" opacity="0.2"/>
-          <circle cx="250" cy="280" r="50" fill="hsl(var(--background))" opacity="0.15"/>
-          <circle cx="100" cy="350" r="25" fill="hsl(var(--background))" opacity="0.25"/>
-          <circle cx="350" cy="120" r="30" fill="hsl(var(--background))" opacity="0.2"/>
+        <pattern id="circles" patternUnits="userSpaceOnUse" width="1200" height="1200">
+          <circle cx="200" cy="200" r="80" fill="hsl(var(--background))" opacity="0.08"/>
+          <circle cx="800" cy="700" r="120" fill="hsl(var(--background))" opacity="0.06"/>
+          <circle cx="400" cy="900" r="60" fill="hsl(var(--background))" opacity="0.09"/>
+          <circle cx="1100" cy="300" r="70" fill="hsl(var(--background))" opacity="0.07"/>
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill="url(#circles)"/>
@@ -77,8 +77,9 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
   `;
 
   const cardStyle = {
-    backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(circlePattern)}")`,
+    backgroundImage: branding.backgroundUrl ? `url(${branding.backgroundUrl})` : `url("data:image/svg+xml,${encodeURIComponent(circlePattern)}")`,
     backgroundSize: 'cover',
+    backgroundPosition: 'center',
   };
 
 

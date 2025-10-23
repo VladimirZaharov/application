@@ -61,6 +61,7 @@ export default function PropoCraftEditor() {
     logoUrl: '/logo.png',
     accentColor: '#2D4777',
     companyName: 'ПОИСКОВАЯ ИНДУСТРИЯ',
+    backgroundUrl: '',
   });
 
   const [selectedProblems, setSelectedProblems] = useState<Problem[]>(() => [

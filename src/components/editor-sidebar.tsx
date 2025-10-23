@@ -331,7 +331,7 @@ export default function EditorSidebar({
               </AccordionTrigger>
               <AccordionContent className="p-4 space-y-6">
                 <div className="space-y-4">
-                   <h4 className="font-medium flex items-center gap-2"><ImageIcon className="w-4 h-4" /> Брендинг компании</h4>
+                   <h4 className="font-medium flex items-center gap-2"><ImageIcon className="w-4 h-4" /> Брендинг и фон</h4>
                    <div className="space-y-2">
                     <Label htmlFor="logoUrl">URL логотипа</Label>
                     <Input
@@ -340,6 +340,16 @@ export default function EditorSidebar({
                       value={branding.logoUrl}
                       onChange={handleBrandingChange}
                       placeholder="https://your-logo.com/logo.png"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="backgroundUrl">URL фонового изображения</Label>
+                    <Input
+                      id="backgroundUrl"
+                      name="backgroundUrl"
+                      value={branding.backgroundUrl}
+                      onChange={handleBrandingChange}
+                      placeholder="https://image.com/background.png"
                     />
                   </div>
                   <div className="space-y-2">
