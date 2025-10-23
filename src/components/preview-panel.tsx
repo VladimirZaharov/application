@@ -89,7 +89,24 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
       <Card className="w-full max-w-4xl mx-auto shadow-xl print-content relative overflow-hidden" id="proposal-preview">
          <div className="absolute inset-0" style={cardStyle}></div>
          <CardContent className="p-8 md:p-12 relative bg-card/90">
-          <header className="flex justify-between items-start mb-12">
+          <header className="mb-12 text-center">
+             <div className="mb-8">
+              {branding.logoUrl ? (
+                <Image
+                  src={branding.logoUrl}
+                  alt="Логотип компании"
+                  width={300}
+                  height={80}
+                  className="object-contain mx-auto"
+                  data-ai-hint="company logo"
+                />
+              ) : (
+                <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                  <PropoCraftIcon className="w-6 h-6" />
+                  <span className="font-semibold">{branding.companyName || 'Ваша компания'}</span>
+                </div>
+              )}
+            </div>
             <div>
               <h1 className="text-4xl font-bold font-headline" style={{ color: branding.accentColor }}>
                 {proposal.projectName || 'Предложение по проекту'}
@@ -97,23 +114,6 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
               <p className="text-muted-foreground text-lg mt-1">
                 Подготовлено для: {proposal.clientName || 'Уважаемый клиент'}
               </p>
-            </div>
-            <div className="flex-shrink-0">
-              {branding.logoUrl ? (
-                <Image
-                  src={branding.logoUrl}
-                  alt="Логотип компании"
-                  width={140}
-                  height={70}
-                  className="object-contain"
-                  data-ai-hint="company logo"
-                />
-              ) : (
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <PropoCraftIcon className="w-6 h-6" />
-                  <span className="font-semibold">{branding.companyName || 'Ваша компания'}</span>
-                </div>
-              )}
             </div>
           </header>
 
