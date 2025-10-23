@@ -14,7 +14,6 @@ interface PreviewPanelProps {
 
 export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) {
   const accentStyle = {
-    color: branding.accentColor,
     borderColor: branding.accentColor,
   } as CSSProperties;
 
@@ -41,7 +40,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
         elements.push(<h3 key={`h3-${i}`} className="text-xl font-semibold font-headline mt-6 mb-2">{line.substring(4)}</h3>);
       } else if (line.startsWith('## ')) {
         flushParagraphs();
-        elements.push(<h2 key={`h2-${i}`} className="text-2xl font-bold font-headline mt-8 mb-4 pb-2 border-b" style={accentStyle}>{line.substring(3)}</h2>);
+        elements.push(<h2 key={`h2-${i}`} className="text-2xl font-bold font-headline mt-8 mb-4 pb-2 border-b" style={{...accentStyle, color: '#2D4777'}}>{line.substring(3)}</h2>);
       } else if (line.startsWith('# ')) {
         flushParagraphs();
         elements.push(<h1 key={`h1-${i}`} className="text-3xl font-bold font-headline">{line.substring(2)}</h1>);
@@ -108,7 +107,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
               )}
             </div>
             <div>
-              <h1 className="text-4xl font-bold font-headline" style={{ color: branding.accentColor }}>
+              <h1 className="text-4xl font-bold font-headline" style={{ color: '#2D4777' }}>
                 {proposal.projectName || 'Предложение по проекту'}
               </h1>
               <p className="text-muted-foreground text-lg mt-1">
@@ -122,7 +121,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
           <section>
             <div
               className="prose prose-lg max-w-none"
-              style={{ '--tw-prose-headings': branding.accentColor, color: '#2D4777' } as CSSProperties}
+              style={{ '--tw-prose-headings': '#2D4777', color: '#2D4777' } as CSSProperties}
             >
               {proposal.fullText ? (
                 renderContent(proposal.fullText)
