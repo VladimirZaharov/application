@@ -71,10 +71,10 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
 
   return (
     <main className="flex-1 p-4 sm:p-6 md:p-10 bg-transparent print-container relative">
-      <Card className="w-full max-w-4xl mx-auto shadow-xl print-content" id="proposal-preview">
+      <Card className="w-full max-w-4xl mx-auto shadow-xl print-content overflow-hidden" id="proposal-preview">
          <div className="absolute inset-0" style={cardStyle}></div>
          <CardContent className="p-8 md:p-12 relative bg-card/95">
-          <div className="absolute top-0 right-0 bottom-0 flex flex-col justify-around h-full py-4 pointer-events-none">
+          <div className="absolute top-0 -right-8 bottom-0 flex flex-col justify-around h-full py-4 pointer-events-none">
               {Array.from({ length: 10 }).map((_, i) => (
                 <div key={i} style={{ marginBottom: '25px' }}>
                   <Image
@@ -93,7 +93,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
                 <Image
                   src={branding.logoUrl}
                   alt="Логотип компании"
-                  width={320}
+                  width={640}
                   height={160}
                   className="object-contain mx-auto"
                   data-ai-hint="company logo"
