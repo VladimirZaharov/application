@@ -76,7 +76,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
          <CardContent className="p-8 md:p-12 relative bg-card/95">
           <div className="absolute top-0 -right-8 bottom-0 flex flex-col justify-around h-full py-4 pointer-events-none">
               {Array.from({ length: 10 }).map((_, i) => (
-                <div key={i} style={{ marginBottom: '12px' }}>
+                <div key={i} style={{ marginBottom: '6px' }}>
                   <Image
                     src="https://searchindustrial.ru/img/Logo_dark_text.png"
                     alt="Watermark"
