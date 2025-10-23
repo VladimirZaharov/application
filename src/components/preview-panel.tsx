@@ -82,7 +82,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
                     alt="Watermark"
                     width={100}
                     height={20}
-                    className="object-contain opacity-10"
+                    className="object-contain opacity-10 -rotate-90"
                   />
                 </div>
               ))}
@@ -93,8 +93,8 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
                 <Image
                   src={branding.logoUrl}
                   alt="Логотип компании"
-                  width={800}
-                  height={80}
+                  width={1600}
+                  height={160}
                   className="object-contain mx-auto"
                   data-ai-hint="company logo"
                 />
