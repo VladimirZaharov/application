@@ -61,11 +61,32 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
     flushParagraphs();
     return elements;
   };
+  
+  const circlePattern = `
+    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="circles" patternUnits="userSpaceOnUse" width="150" height="150">
+          <circle cx="20" cy="20" r="10" fill="hsl(var(--background))" opacity="0.5"/>
+          <circle cx="80" cy="90" r="20" fill="hsl(var(--background))" opacity="0.4"/>
+          <circle cx="40" cy="120" r="15" fill="hsl(var(--background))" opacity="0.6"/>
+          <circle cx="130" cy="50" r="12" fill="hsl(var(--background))" opacity="0.5"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#circles)"/>
+    </svg>
+  `;
+
+  const cardStyle = {
+    backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(circlePattern)}")`,
+    backgroundSize: '300px 300px',
+  };
+
 
   return (
     <main className="flex-1 p-4 sm:p-6 md:p-10 bg-transparent print-container">
-      <Card className="w-full max-w-4xl mx-auto shadow-xl print-content" id="proposal-preview">
-        <CardContent className="p-8 md:p-12">
+      <Card className="w-full max-w-4xl mx-auto shadow-xl print-content relative overflow-hidden" id="proposal-preview">
+         <div className="absolute inset-0" style={cardStyle}></div>
+         <CardContent className="p-8 md:p-12 relative bg-card/90">
           <header className="flex justify-between items-start mb-12">
             <div>
               <h1 className="text-4xl font-bold font-headline" style={accentStyle}>
