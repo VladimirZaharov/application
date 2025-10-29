@@ -135,6 +135,7 @@ export default function PropoCraftEditor() {
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-background">
+      <PreviewPanel proposal={proposal} branding={branding} />
       <EditorSidebar
         proposal={proposal}
         setProposal={setProposal}
@@ -151,7 +152,6 @@ export default function PropoCraftEditor() {
         growthPointsText={growthPointsText}
         setGrowthPointsText={setGrowthPointsText}
       />
-      <PreviewPanel proposal={proposal} branding={branding} />
     </div>
   );
 }
