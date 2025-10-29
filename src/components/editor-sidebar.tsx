@@ -2,6 +2,7 @@
 
 import type { ChangeEvent, ClipboardEvent, Dispatch, SetStateAction } from 'react';
 import {
+  BarChart,
   Bot,
   Brush,
   Download,
@@ -47,6 +48,8 @@ interface EditorSidebarProps {
   isAdjustingTone: boolean;
   auditGoalText: string;
   setAuditGoalText: Dispatch<SetStateAction<string>>;
+  trafficAnalysisText: string;
+  setTrafficAnalysisText: Dispatch<SetStateAction<string>>;
   growthPointsText: string;
   setGrowthPointsText: Dispatch<SetStateAction<string>>;
 }
@@ -62,6 +65,8 @@ export default function EditorSidebar({
   isAdjustingTone,
   auditGoalText,
   setAuditGoalText,
+  trafficAnalysisText,
+  setTrafficAnalysisText,
   growthPointsText,
   setGrowthPointsText,
 }: EditorSidebarProps) {
@@ -166,7 +171,7 @@ export default function EditorSidebar({
         <CardContent className="p-0 flex-grow overflow-y-auto">
           <Accordion
             type="multiple"
-            defaultValue={['settings', 'content', 'style', 'audit-goal']}
+            defaultValue={['settings', 'content', 'style', 'audit-goal', 'traffic-analysis']}
             className="w-full"
           >
             <AccordionItem value="settings">
@@ -226,6 +231,27 @@ export default function EditorSidebar({
                     onChange={(e) => setAuditGoalText(e.target.value)}
                     rows={8}
                     placeholder="Опишите здесь цель аудита..."
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="traffic-analysis">
+              <AccordionTrigger className="px-4 text-base font-semibold">
+                <div className="flex items-center gap-2">
+                  <BarChart className="h-5 w-5" />
+                  Анализ трафика
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-4 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="traffic-analysis-content">Содержание</Label>
+                  <Textarea
+                    id="traffic-analysis-content"
+                    value={trafficAnalysisText}
+                    onChange={(e) => setTrafficAnalysisText(e.target.value)}
+                    rows={12}
+                    placeholder="Опишите здесь анализ трафика..."
                   />
                 </div>
               </AccordionContent>

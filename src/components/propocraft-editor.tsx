@@ -10,6 +10,7 @@ import PreviewPanel from './preview-panel';
 
 const defaultProposalText = (
   auditGoalText: string,
+  trafficAnalysisText: string,
   problems: Problem[],
   growthPointsText: string
 ) => {
@@ -37,6 +38,9 @@ const defaultProposalText = (
 
   return `## Цель аудита
 ${auditGoalText}
+
+## Анализ трафика
+${trafficAnalysisText}
 
 ${problemStatements}
 
@@ -73,6 +77,30 @@ export default function PropoCraftEditor() {
     'В этом документе изложено предложение по нашему совместному проекту. Мы проанализировали вашу текущую ситуацию и определили ключевые области, в которых наш опыт может принести значительную пользу. Наша цель — предоставить надежное решение, которое решит ваши проблемы и поможет достичь поставленных целей.'
   );
 
+  const [trafficAnalysisText, setTrafficAnalysisText] = useState<string>(
+    `По данным Яндекс Метрики, за последний месяц трафик из поисковых систем (с SEO) на сайт составил {указать количество} визитов в день.
+Среднесуточный трафик из поисковой системы Google составляет {указать количество} визитов в сутки. 
+Среднесуточный трафик из поисковой системы Яндекс составляет {указать количество} визитов в сутки. 
+
+{Место для скриншота}
+
+Трафик из поисковых систем крайне низкий для данной тематики, что говорит нам о том, что у сайта крайне незначительная видимость в них, и необходимо сделать акцент на продвижении сайта в поисковых системах.
+
+Трафик на сайт за последний месяц с мобильных устройств составляет {указать количество}% от общего трафика, а трафик с ПК равен {указать количество}%, показатель отказов со смартфонов составляет {указать количество}%, с ПК - {указать количество}%.
+
+Глубина просмотра с мобильных устройств ниже ({указать количество} страницы), чем с десктопной версии ({указать количество} страницы).
+
+Время проведения с мобильных устройств также ниже ({указать количество} минуты), чем с десктоп версии ({указать количество} минуты).
+
+Показатели лояльности трафика крайне низкие. Рекомендуется особую роль уделить юзабилити оптимизации сайта мобильных устройств и скорости загрузки страниц.
+
+В будущем мы прогнозируем рост доли мобильного трафика. Крайне важно, чтобы сайт был удобен для этого сегмента аудитории.
+
+Как показывают данные Яндекс Метрики, за последний месяц {указать количество}% пользователей просматривают лишь одну страницу сайта.
+
+Если говорить о длительности сессии, то по данным Яндекс Метрики почти {указать количество}% пользователей покидают сайт в первые 30 секунд.`
+  );
+
   const [growthPointsText, setGrowthPointsText] = useState<string>(
     `Мы предлагаем комплексное решение, включающее многоэтапный подход к решению выявленных проблем. Наша команда экспертов будет тесно сотрудничать с вами, чтобы обеспечить беспрепятственное внедрение и успешный результат. Дальнейшие подробности о конкретных результатах и сроках будут предоставлены после принятия этого предложения.`
   );
@@ -80,9 +108,9 @@ export default function PropoCraftEditor() {
   useEffect(() => {
     setProposal((prev) => ({
       ...prev,
-      fullText: defaultProposalText(auditGoalText, selectedProblems, growthPointsText),
+      fullText: defaultProposalText(auditGoalText, trafficAnalysisText, selectedProblems, growthPointsText),
     }));
-  }, [auditGoalText, selectedProblems, growthPointsText]);
+  }, [auditGoalText, trafficAnalysisText, selectedProblems, growthPointsText]);
 
   const adjustTone = async (tone: string) => {
     if (!tone) return;
@@ -119,6 +147,8 @@ export default function PropoCraftEditor() {
         isAdjustingTone={isAdjustingTone}
         auditGoalText={auditGoalText}
         setAuditGoalText={setAuditGoalText}
+        trafficAnalysisText={trafficAnalysisText}
+        setTrafficAnalysisText={setTrafficAnalysisText}
         growthPointsText={growthPointsText}
         setGrowthPointsText={setGrowthPointsText}
       />
