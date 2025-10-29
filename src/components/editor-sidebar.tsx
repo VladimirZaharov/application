@@ -155,8 +155,8 @@ export default function EditorSidebar({
   }, {} as Record<string, Problem[]>);
 
   return (
-    <aside className="no-print w-full max-w-sm flex-shrink-0">
-      <Card className="h-full max-h-screen flex flex-col rounded-none border-r border-l-0 border-t-0 border-b-0 shadow-none">
+    <aside className="no-print flex-grow flex-shrink-0">
+      <Card className="h-full max-h-screen flex flex-col rounded-none border-l border-r-0 border-t-0 border-b-0 shadow-none">
         <CardHeader className="flex flex-row items-center justify-between p-4 border-b">
           <div className="flex items-center gap-3">
             <PropoCraftIcon className="h-7 w-7 text-primary" />

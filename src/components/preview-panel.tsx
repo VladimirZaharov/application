@@ -70,15 +70,15 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
 
 
   return (
-    <main className="flex-1 p-4 sm:p-6 md:p-10 bg-transparent print-container relative">
+    <main className="flex-1 p-4 sm:p-6 md:p-10 bg-transparent print-container relative md:max-w-sm w-full">
       <Card className="w-full max-w-4xl mx-auto shadow-xl print-content overflow-hidden" id="proposal-preview">
          <div className="absolute inset-0" style={cardStyle}></div>
          <CardContent className="p-8 md:p-12 relative bg-card/95">
-          <div className="absolute top-0 -right-8 bottom-0 flex flex-col justify-around h-full py-4 pointer-events-none">
+          <div className="absolute top-0 -right-[26px] bottom-0 flex flex-col justify-around h-full py-4 pointer-events-none">
               {Array.from({ length: 10 }).map((_, i) => (
-                <div key={i} style={{ marginBottom: '3px' }}>
+                <div key={i} style={{ marginBottom: '1.5px' }}>
                   <Image
-                    src="https://searchindustrial.ru/img/Logo_dark_text.png"
+                    src="https://searchindustrial.ru/img/logo_dark_part.png"
                     alt="Watermark"
                     width={100}
                     height={20}
