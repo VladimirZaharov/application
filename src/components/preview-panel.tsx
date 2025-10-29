@@ -70,7 +70,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
 
 
   return (
-    <main className="no-print w-full md:w-[600px] flex-shrink-0 print-container relative">
+    <main className="no-print w-full print-container relative">
       <Card className="w-full max-w-4xl mx-auto shadow-xl print-content overflow-hidden" id="proposal-preview">
          <div className="absolute inset-0" style={cardStyle}></div>
          <CardContent className="p-8 md:p-12 relative bg-card/95">

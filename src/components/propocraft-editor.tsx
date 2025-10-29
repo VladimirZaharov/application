@@ -135,7 +135,9 @@ export default function PropoCraftEditor() {
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-background">
-      <PreviewPanel proposal={proposal} branding={branding} />
+      <div className="md:w-[500px] flex-shrink-0">
+        <PreviewPanel proposal={proposal} branding={branding} />
+      </div>
       <EditorSidebar
         proposal={proposal}
         setProposal={setProposal}
