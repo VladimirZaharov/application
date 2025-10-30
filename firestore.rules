@@ -1,0 +1,67 @@
+/**
+ * @fileoverview Firestore Security Rules for PropoCraft application.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model for projects. Each project
+ * is nested under a specific user's document, ensuring that only the owner
+ * can read, create, update, or delete their own projects.
+ *
+ * Data Structure:
+ * All project data is nested under /users/{userId}/projects/{projectId}. This
+ * hierarchical structure simplifies authorization based on the user ID.
+ *
+ * Key Security Decisions:
+ * - Users can only access their own projects. Listing projects belonging to
+ *   other users is disallowed.
+ * - Data shape is not strictly enforced during this prototyping phase to
+ *   allow for rapid iteration.
+ * - The 'id' field of the Project is validated to match the 'projectId' in the path.
+ *
+ * Denormalization for Authorization:
+ * The project ID is included in both the path (/users/{userId}/projects/{projectId})
+ * and the document data (project.id) to avoid costly `get()` operations and maintain
+ * data consistency.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Secures project documents under a user's path.
+     * @path /users/{userId}/projects/{projectId}
+     * @allow (create) - Allows a user to create a new project with a matching userId and projectId.
+     * @allow (get, list, update, delete) - Allows a user to access, modify, or delete their own project.
+     * @deny (create) - Denies a user from creating a project under another user's ID.
+     * @deny (get, list, update, delete) - Denies a user from accessing, modifying, or deleting another user's project.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/projects/{projectId} {
+      // Helper function to check if the request is made by the owner.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      // Helper function to check if the request is made by the existing owner.
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      // Allows a user to read their own project.
+      allow get: if isOwner(userId);
+
+      // Allows a user to list their own projects.
+      allow list: if isOwner(userId);
+
+      // Allows a user to create a new project if the userId and projectId match.
+      allow create: if isOwner(userId)
+        && request.resource.data.id == projectId;
+
+      // Allows a user to update their own project if it exists.
+      allow update: if isExistingOwner(userId)
+        && request.resource.data.id == resource.data.id; // Ensures ID immutability
+
+      // Allows a user to delete their own project if it exists.
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}

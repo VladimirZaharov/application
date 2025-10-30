@@ -1,0 +1,90 @@
+{
+  "entities": {
+    "Project": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Project",
+      "type": "object",
+      "description": "Represents a proposal project that can be saved, edited, and shared.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Project entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The unique name of the project."
+        },
+        "templateData": {
+          "type": "string",
+          "description": "JSON data representing the filled template. This allows persistence of dynamic content."
+        },
+        "tone": {
+          "type": "string",
+          "description": "The tone of the proposal, determined by AI, e.g., formal, informal, technical."
+        },
+        "problemLibrarySelections": {
+          "type": "array",
+          "description": "References to ProblemLibrary entries.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "brandingData": {
+          "type": "string",
+          "description": "JSON data representing the branding configurations (company logo, color schemes)."
+        },
+        "lastModified": {
+          "type": "string",
+          "description": "Timestamp of the last modification.",
+          "format": "date-time"
+        },
+        "createdDate": {
+          "type": "string",
+          "description": "Timestamp of the creation date.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "templateData",
+        "tone",
+        "problemLibrarySelections",
+        "brandingData",
+        "lastModified",
+        "createdDate"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}/projects/{projectId}",
+        "definition": {
+          "entityName": "Project",
+          "schema": {
+            "$ref": "#/backend/entities/Project"
+          },
+          "description": "Stores project data owned by a specific user. Uses path-based ownership, enabling simple security rules based on the 'userId' and allows collaboration on the same projects by different specialists.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user who owns the project."
+            },
+            {
+              "name": "projectId",
+              "description": "The unique identifier of the project."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure authorization independence, clarity, and scalability for the PropoCraft application. It leverages path-based ownership for user-created projects, enabling secure and efficient data access. The design avoids using `get()` calls in security rules by denormalizing authorization data where necessary and uses structural segregation to enforce consistent security postures across collections.\n\nThe structure stores each project under its owner's document at `/users/{userId}/projects/{projectId}`. This approach naturally enforces ownership and simplifies security rules based on the requesting user's ID.  The `name` field must be unique. To ensure QAPs, we segregate user-owned data into user-specific subcollections."
+  }
+}
