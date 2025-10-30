@@ -7,17 +7,15 @@ import {
   collection,
   getDocs,
   query,
-  where,
   getDoc,
 } from 'firebase/firestore';
-import { getSdks } from '@/firebase';
+import { initializeFirebase } from '@/firebase';
 import { ProjectData } from '@/lib/types';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { errorEmitter } from '@/firebase/error-emitter';
 
-const { firestore } = getSdks();
-
 export async function saveProject(userId: string, projectData: ProjectData) {
+  const { firestore } = initializeFirebase();
   const projectRef = doc(
     firestore,
     `users/${userId}/projects/${projectData.id}`
@@ -29,6 +27,7 @@ export async function saveProject(userId: string, projectData: ProjectData) {
   };
 
   setDoc(projectRef, dataToSave, { merge: true }).catch((error) => {
+    console.error('Firestore save error:', error);
     errorEmitter.emit(
       'permission-error',
       new FirestorePermissionError({
@@ -41,6 +40,7 @@ export async function saveProject(userId: string, projectData: ProjectData) {
 }
 
 export async function loadProjects(userId: string) {
+  const { firestore } = initializeFirebase();
   const projectsRef = collection(firestore, `users/${userId}/projects`);
   const q = query(projectsRef);
   const querySnapshot = await getDocs(q);
@@ -48,6 +48,7 @@ export async function loadProjects(userId: string) {
 }
 
 export async function loadProject(userId: string, projectId: string) {
+  const { firestore } = initializeFirebase();
   const projectRef = doc(firestore, `users/${userId}/projects/${projectId}`);
   const docSnap = await getDoc(projectRef);
   if (docSnap.exists()) {
