@@ -17,3 +17,15 @@ export interface Proposal {
   projectName: string;
   fullText: string;
 }
+
+export interface ProjectData {
+  id: string;
+  name: string;
+  proposal: string;
+  branding: string;
+  selectedProblems: string;
+  auditGoalText: string;
+  trafficAnalysisText: string;
+  growthPointsText: string;
+  lastModified: any;
+}

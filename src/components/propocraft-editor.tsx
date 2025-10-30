@@ -7,6 +7,11 @@ import { problemLibrary } from '@/lib/data';
 import type { Branding, Problem, Proposal } from '@/lib/types';
 import EditorSidebar from './editor-sidebar';
 import PreviewPanel from './preview-panel';
+import { useFirebase } from '@/firebase';
+import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
+import { saveProject } from '@/lib/firebase/firestore';
+import { v4 as uuidv4 } from 'uuid';
+
 
 const defaultProposalText = (
   auditGoalText: string,
@@ -72,6 +77,9 @@ const getInitialState = <T>(key: string, defaultValue: T): T => {
 export default function PropoCraftEditor() {
   const { toast } = useToast();
   const [isAdjustingTone, startTransition] = useTransition();
+  const { auth, user, isUserLoading } = useFirebase();
+  const [isSaving, setIsSaving] = useState(false);
+  const [projectId, setProjectId] = useState<string | null>(null);
 
   const [proposal, setProposal] = useState<Proposal>(() => getInitialState('propocraft_proposal', {
     clientName: 'Globex Corporation',
@@ -124,6 +132,12 @@ export default function PropoCraftEditor() {
   ));
 
   useEffect(() => {
+    if (!isUserLoading && !user) {
+      initiateAnonymousSignIn(auth);
+    }
+  }, [auth, user, isUserLoading]);
+
+  useEffect(() => {
     setProposal((prev) => ({
       ...prev,
       fullText: defaultProposalText(auditGoalText, trafficAnalysisText, selectedProblems, growthPointsText),
@@ -160,9 +174,55 @@ export default function PropoCraftEditor() {
     });
   };
 
+  const handleSave = async () => {
+    if (!user) {
+      toast({
+        variant: 'destructive',
+        title: 'Ошибка',
+        description: 'Вы должны быть авторизованы, чтобы сохранять проекты.',
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    const currentProjectId = projectId || uuidv4();
+    if (!projectId) {
+      setProjectId(currentProjectId);
+    }
+
+    const projectData = {
+      id: currentProjectId,
+      name: proposal.projectName || 'Новый проект',
+      proposal: JSON.stringify(proposal),
+      branding: JSON.stringify(branding),
+      selectedProblems: JSON.stringify(selectedProblems),
+      auditGoalText,
+      trafficAnalysisText,
+      growthPointsText,
+      lastModified: new Date().toISOString(),
+    };
+
+    try {
+      await saveProject(user.uid, projectData);
+      toast({
+        title: 'Проект сохранен',
+        description: `Проект "${projectData.name}" успешно сохранен.`,
+      });
+    } catch (error) {
+      console.error('Failed to save project:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Ошибка сохранения',
+        description: 'Не удалось сохранить проект. Пожалуйста, попробуйте еще раз.',
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row h-screen bg-background">
-      <div className="md:w-[500px] flex-shrink-0">
+      <div className="md:w-1/2 flex-shrink-0">
         <PreviewPanel proposal={proposal} branding={branding} />
       </div>
       <EditorSidebar
@@ -180,6 +240,8 @@ export default function PropoCraftEditor() {
         setTrafficAnalysisText={setTrafficAnalysisText}
         growthPointsText={growthPointsText}
         setGrowthPointsText={setGrowthPointsText}
+        onSave={handleSave}
+        isSaving={isSaving}
       />
     </div>
   );

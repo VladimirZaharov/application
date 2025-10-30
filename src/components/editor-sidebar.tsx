@@ -10,6 +10,7 @@ import {
   ImageIcon,
   Library,
   Loader2,
+  Save,
   Settings,
   TrendingUp,
 } from 'lucide-react';
@@ -52,6 +53,8 @@ interface EditorSidebarProps {
   setTrafficAnalysisText: Dispatch<SetStateAction<string>>;
   growthPointsText: string;
   setGrowthPointsText: Dispatch<SetStateAction<string>>;
+  onSave: () => Promise<void>;
+  isSaving: boolean;
 }
 
 export default function EditorSidebar({
@@ -69,6 +72,8 @@ export default function EditorSidebar({
   setTrafficAnalysisText,
   growthPointsText,
   setGrowthPointsText,
+  onSave,
+  isSaving,
 }: EditorSidebarProps) {
   const handleProblemSelection = (problem: Problem, checked: boolean) => {
     setSelectedProblems((prev) =>
@@ -160,7 +165,7 @@ export default function EditorSidebar({
   }, {} as Record<string, Problem[]>);
 
   return (
-    <aside className="flex-1 p-4 sm:p-6 md:p-10 bg-transparent print-container">
+    <aside className="w-[600px] p-4 sm:p-6 md:p-10 bg-transparent print-container">
       <Card className="h-full max-h-screen flex flex-col rounded-lg border shadow-lg">
         <CardHeader className="flex flex-row items-center justify-between p-4 border-b">
           <div className="flex items-center gap-3">
@@ -422,8 +427,16 @@ export default function EditorSidebar({
             </AccordionItem>
           </Accordion>
         </CardContent>
-        <div className="p-4 border-t mt-auto">
-          <Button onClick={handlePrint} className="w-full" size="lg">
+        <div className="p-4 border-t mt-auto flex items-center gap-2">
+          <Button onClick={onSave} className="w-full" size="lg" disabled={isSaving}>
+            {isSaving ? (
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+            ) : (
+              <Save className="mr-2 h-5 w-5" />
+            )}
+            {isSaving ? 'Сохранение...' : 'Сохранить'}
+          </Button>
+          <Button onClick={handlePrint} className="w-full" size="lg" variant="outline">
             <Download className="mr-2 h-5 w-5" />
             Скачать как PDF
           </Button>
