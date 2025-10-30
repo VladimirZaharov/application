@@ -51,33 +51,51 @@ ${growthPointsText}
 Мы рады возможности сотрудничества с вами. Чтобы двигаться дальше, мы предлагаем провести дополнительную встречу для детального обсуждения этого предложения и ответов на любые ваши вопросы.`;
 };
 
+// Helper function to get initial state from localStorage
+const getInitialState = <T>(key: string, defaultValue: T): T => {
+  if (typeof window === 'undefined') {
+    return defaultValue;
+  }
+  const storedValue = localStorage.getItem(key);
+  if (storedValue) {
+    try {
+      return JSON.parse(storedValue);
+    } catch (error) {
+      console.error(`Error parsing localStorage key "${key}":`, error);
+      return defaultValue;
+    }
+  }
+  return defaultValue;
+};
+
+
 export default function PropoCraftEditor() {
   const { toast } = useToast();
   const [isAdjustingTone, startTransition] = useTransition();
 
-  const [proposal, setProposal] = useState<Proposal>({
+  const [proposal, setProposal] = useState<Proposal>(() => getInitialState('propocraft_proposal', {
     clientName: 'Globex Corporation',
     projectName: 'Стратегия продвижения в поиске сайта',
     fullText: '',
-  });
+  }));
 
-  const [branding, setBranding] = useState<Branding>({
-    logoUrl: 'https://searchindustrial.ru/img/Logo_dark_text.png',
+  const [branding, setBranding] = useState<Branding>(() => getInitialState('propocraft_branding', {
+    logoUrl: 'https://searchindustrial.ru/img/logo_dark_part.png',
     accentColor: '#FFC502',
     companyName: 'ПОИСКОВАЯ ИНДУСТРИЯ',
     backgroundUrl: '',
-  });
+  }));
 
-  const [selectedProblems, setSelectedProblems] = useState<Problem[]>(() => [
+  const [selectedProblems, setSelectedProblems] = useState<Problem[]>(() => getInitialState('propocraft_selectedProblems', [
     { ...problemLibrary[0] },
     { ...problemLibrary[2] },
-  ]);
+  ]));
 
-  const [auditGoalText, setAuditGoalText] = useState<string>(
+  const [auditGoalText, setAuditGoalText] = useState<string>(() => getInitialState('propocraft_auditGoalText', 
     'В этом документе изложено предложение по нашему совместному проекту. Мы проанализировали вашу текущую ситуацию и определили ключевые области, в которых наш опыт может принести значительную пользу. Наша цель — предоставить надежное решение, которое решит ваши проблемы и поможет достичь поставленных целей.'
-  );
+  ));
 
-  const [trafficAnalysisText, setTrafficAnalysisText] = useState<string>(
+  const [trafficAnalysisText, setTrafficAnalysisText] = useState<string>(() => getInitialState('propocraft_trafficAnalysisText',
     `По данным Яндекс Метрики, за последний месяц трафик из поисковых систем (с SEO) на сайт составил {указать количество} визитов в день.
 Среднесуточный трафик из поисковой системы Google составляет {указать количество} визитов в сутки. 
 Среднесуточный трафик из поисковой системы Яндекс составляет {указать количество} визитов в сутки. 
@@ -99,11 +117,11 @@ export default function PropoCraftEditor() {
 Как показывают данные Яндекс Метрики, за последний месяц {указать количество}% пользователей просматривают лишь одну страницу сайта.
 
 Если говорить о длительности сессии, то по данным Яндекс Метрики почти {указать количество}% пользователей покидают сайт в первые 30 секунд.`
-  );
+  ));
 
-  const [growthPointsText, setGrowthPointsText] = useState<string>(
+  const [growthPointsText, setGrowthPointsText] = useState<string>(() => getInitialState('propocraft_growthPointsText',
     `Мы предлагаем комплексное решение, включающее многоэтапный подход к решению выявленных проблем. Наша команда экспертов будет тесно сотрудничать с вами, чтобы обеспечить беспрепятственное внедрение и успешный результат. Дальнейшие подробности о конкретных результатах и сроках будут предоставлены после принятия этого предложения.`
-  );
+  ));
 
   useEffect(() => {
     setProposal((prev) => ({
@@ -111,6 +129,15 @@ export default function PropoCraftEditor() {
       fullText: defaultProposalText(auditGoalText, trafficAnalysisText, selectedProblems, growthPointsText),
     }));
   }, [auditGoalText, trafficAnalysisText, selectedProblems, growthPointsText]);
+  
+    useEffect(() => {
+    localStorage.setItem('propocraft_proposal', JSON.stringify(proposal));
+    localStorage.setItem('propocraft_branding', JSON.stringify(branding));
+    localStorage.setItem('propocraft_selectedProblems', JSON.stringify(selectedProblems));
+    localStorage.setItem('propocraft_auditGoalText', JSON.stringify(auditGoalText));
+    localStorage.setItem('propocraft_trafficAnalysisText', JSON.stringify(trafficAnalysisText));
+    localStorage.setItem('propocraft_growthPointsText', JSON.stringify(growthPointsText));
+  }, [proposal, branding, selectedProblems, auditGoalText, trafficAnalysisText, growthPointsText]);
 
   const adjustTone = async (tone: string) => {
     if (!tone) return;
