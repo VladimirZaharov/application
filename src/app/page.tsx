@@ -1,9 +1,9 @@
-import PropoCraftEditor from '@/components/propocraft-editor';
+import ProjectChoose from '@/components/project-choose';
 
 export default function Home() {
   return (
     <main>
-      <PropoCraftEditor />
+      <ProjectChoose />
     </main>
   );
 }

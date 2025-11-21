@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { handleToneAdjustment } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { problemLibrary } from '@/lib/data';

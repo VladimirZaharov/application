@@ -162,6 +162,9 @@ export default function EditorSidebar({
             <PropoCraftIcon className="h-7 w-7 text-primary" />
             <CardTitle className="text-xl font-headline">PropoCraft</CardTitle>
           </div>
+          <Button variant="outline" size="sm" onClick={() => window.location.href = '/'}>
+            Проекты
+          </Button>
         </CardHeader>
         <CardContent className="p-0 flex-grow overflow-y-auto">
           <Accordion
