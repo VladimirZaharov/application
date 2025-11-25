@@ -111,21 +111,18 @@ export default function EditorSidebar({
   }, {} as Record<string, Problem[]>);
 
   return (
-    <aside className="no-print w-full max-w-sm flex-shrink-0">
-      <Card className="h-full max-h-screen flex flex-col rounded-none border-r border-l-0 border-t-0 border-b-0 shadow-none">
+    <aside className="w-[600px] p-4 sm:p-6 md:p-10 bg-transparent print-container">
+      <Card className="h-full max-h-screen flex flex-col rounded-lg border shadow-lg">
         <CardHeader className="flex flex-row items-center justify-between p-4 border-b">
           <div className="flex items-center gap-3">
             <PropoCraftIcon className="h-7 w-7 text-primary" />
-            <CardTitle className="text-xl font-headline">PropoCraft</CardTitle>
+            <CardTitle className="text-xl font-headline">Редактор PropoCraft</CardTitle>
           </div>
-          <Button variant="outline" size="sm" onClick={() => window.location.href = '/'}>
-            Проекты
-          </Button>
         </CardHeader>
         <CardContent className="p-0 flex-grow overflow-y-auto">
           <Accordion
             type="multiple"
-            defaultValue={['settings', 'content', 'style', 'audit-goal']}
+            defaultValue={['settings', 'content', 'style', 'audit-goal', 'traffic-analysis']}
             className="w-full"
           >
             <AccordionItem value="settings">
@@ -142,7 +139,8 @@ export default function EditorSidebar({
                     id="companyName"
                     name="companyName"
                     value={projectData.company_name}
-                    placeholder="например, Innovate Solutions"
+                    onChange={handleBrandingChange}
+                    placeholder={branding.companyName}
                   />
                 </div>
                 <div className="space-y-2">
@@ -151,7 +149,7 @@ export default function EditorSidebar({
                     id="clientName"
                     name="clientName"
                     value={projectData.client_name}
-                    placeholder="например, Globex Corporation"
+                    placeholder={proposal.clientName}
                   />
                 </div>
                 <div className="space-y-2">
@@ -160,8 +158,7 @@ export default function EditorSidebar({
                     id="projectName"
                     name="projectName"
                     value={projectData.project_name}
-                    onChange={handleProposalChange}
-                    placeholder="например, Редизайн сайта"
+                    placeholder={proposal.projectName}
                   />
                 </div>
               </AccordionContent>
@@ -182,7 +179,28 @@ export default function EditorSidebar({
                     value={auditGoalText}
                     onChange={(e) => setAuditGoalText(e.target.value)}
                     rows={8}
-                    placeholder="Опишите здесь цель аудита..."
+                    placeholder={auditGoalText}
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="traffic-analysis">
+              <AccordionTrigger className="px-4 text-base font-semibold">
+                <div className="flex items-center gap-2">
+                  <BarChart className="h-5 w-5" />
+                  Анализ трафика
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-4 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="traffic-analysis-content">Содержание</Label>
+                  <Textarea
+                    id="traffic-analysis-content"
+                    value={trafficAnalysisText}
+                    onChange={(e) => setTrafficAnalysisText(e.target.value)}
+                    rows={12}
+                    placeholder="Опишите здесь анализ трафика..."
                   />
                 </div>
               </AccordionContent>
@@ -200,64 +218,63 @@ export default function EditorSidebar({
                   Выберите проблемы, которые будет решать это предложение.
                 </p>
                 {Object.entries(problemsByCategory).map(([category, problems]) => (
-                  <div key={category} className="space-y-2">
-                    <h4 className="font-semibold text-sm text-primary">{category}</h4>
-                    {problems.map((problem) => (
-                      <div key={problem.id} className="flex items-start space-x-2 p-2 rounded-md hover:bg-secondary transition-colors">
-                        <Checkbox
-                          id={`lib-${problem.id}`}
-                          checked={selectedProblems.some((p) => p.id === problem.id)}
-                          onCheckedChange={(checked) =>
-                            handleProblemSelection(problem, !!checked)
-                          }
-                        />
-                        <div className="grid gap-1.5 leading-none">
-                          <label
-                            htmlFor={`lib-${problem.id}`}
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
-                            {problem.title}
-                          </label>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <Accordion type="multiple" className="space-y-2" key={category}>
+                     <AccordionItem value={category} className="border-b-0">
+                        <AccordionTrigger className="p-2 text-sm font-semibold text-primary hover:bg-secondary rounded-md">
+                           {category}
+                        </AccordionTrigger>
+                        <AccordionContent className="p-2 space-y-2">
+                          {problems.map((problem) => {
+                            const isSelected = selectedProblems.some((p) => p.id === problem.id);
+                            const selectedProblem = selectedProblems.find((p) => p.id === problem.id);
+
+                            return (
+                              <Accordion type="multiple" key={problem.id} className="space-y-2">
+                                <AccordionItem value={problem.id} className="border rounded-md">
+                                  <div className="flex items-start space-x-2 p-2 rounded-md transition-colors">
+                                    <Checkbox
+                                      id={`lib-${problem.id}`}
+                                      checked={isSelected}
+                                      onCheckedChange={(checked) => handleProblemSelection(problem, !!checked)}
+                                    />
+                                    <AccordionTrigger className="p-0 flex-1 justify-start">
+                                      <label
+                                        htmlFor={`lib-${problem.id}`}
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                      >
+                                        {problem.title}
+                                      </label>
+                                    </AccordionTrigger>
+                                  </div>
+                                  {isSelected && selectedProblem && (
+                                    <AccordionContent className="p-4 border-t">
+                                        <div className="space-y-2">
+                                          <Label htmlFor={`content-${problem.id}`}>Содержание</Label>
+                                          <Textarea
+                                            id={`content-${problem.id}`}
+                                            value={selectedProblem.content}
+                                            onChange={(e) => handleProblemUpdate(problem.id, 'content', e.target.value)}
+                                            onPaste={(e) => handlePaste(problem.id, e)}
+                                            rows={8}
+                                          />
+                                        </div>
+                                        <div className="space-y-2 mt-4">
+                                          <Label htmlFor={`screenshot-upload-${problem.id}`} className="text-sm font-medium">Добавить скриншот в содержание</Label>
+                                          <Input id={`screenshot-upload-${problem.id}`} type="file" className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100" accept="image/*" onChange={(e) => handleScreenshotUpload(problem.id, e)} />
+                                        </div>
+                                    </AccordionContent>
+                                  )}
+                                </AccordionItem>
+                              </Accordion>
+                            );
+                          })}
+                        </AccordionContent>
+                     </AccordionItem>
+                  </Accordion>
                 ))}
-                
-                {selectedProblems.length > 0 && (
-                  <>
-                    <Separator className="my-4"/>
-                    <h4 className="font-semibold">Выбранные проблемы</h4>
-                    <Accordion type="multiple" className="space-y-2">
-                      {selectedProblems.map((problem) => (
-                        <AccordionItem value={problem.id} key={problem.id} className='border-b-0'>
-                          <AccordionTrigger className="p-2 text-sm font-medium hover:bg-secondary rounded-md">
-                            {problem.title}
-                          </AccordionTrigger>
-                          <AccordionContent className="p-4 space-y-4">
-                            <div className="space-y-2">
-                              <Label htmlFor={`content-${problem.id}`}>Содержание</Label>
-                              <Textarea
-                                id={`content-${problem.id}`}
-                                value={problem.content}
-                                onChange={(e) => handleProblemUpdate(problem.id, 'content', e.target.value)}
-                                onPaste={(e) => handlePaste(problem.id, e)}
-                                rows={8}
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor={`screenshot-upload-${problem.id}`} className="text-sm font-medium">Добавить скриншот в содержание</Label>
-                              <Input id={`screenshot-upload-${problem.id}`} type="file" className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100" accept="image/*" onChange={(e) => handleScreenshotUpload(problem.id, e)} />
-                            </div>
-                          </AccordionContent>
-                        </AccordionItem>
-                      ))}
-                    </Accordion>
-                  </>
-                )}
               </AccordionContent>
             </AccordionItem>
-            
+
             <AccordionItem value="growth-points">
               <AccordionTrigger className="px-4 text-base font-semibold">
                 <div className="flex items-center gap-2">
@@ -354,8 +371,16 @@ export default function EditorSidebar({
             </AccordionItem>
           </Accordion>
         </CardContent>
-        <div className="p-4 border-t mt-auto">
-          <Button onClick={handlePrint} className="w-full" size="lg">
+        <div className="p-4 border-t mt-auto flex items-center gap-2">
+          <Button onClick={onSave} className="w-full" size="lg" disabled={isSaving}>
+            {isSaving ? (
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+            ) : (
+              <Save className="mr-2 h-5 w-5" />
+            )}
+            {isSaving ? 'Сохранение...' : 'Сохранить'}
+          </Button>
+          <Button onClick={handlePrint} className="w-full" size="lg" variant="outline">
             <Download className="mr-2 h-5 w-5" />
             Скачать как PDF
           </Button>

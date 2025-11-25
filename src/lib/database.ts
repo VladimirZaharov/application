@@ -16,135 +16,48 @@ export async function getAllProjects(): Promise<ProjectsList[]> {
   return stmt.all();
 }
 
-// Получение проекта по ID со всеми связанными данными
 export async function getProjectById(id: number): Promise<ProjectData | undefined> {
-  const stmt = db.prepare(`
-    SELECT 
-      p.*,
-      t.*,
-      s.*,
-      u.*,
-      c.*,
-      r.*,
-      cp.*
-    FROM projects p
-    LEFT JOIN technical_optimization t ON p.technical_optimization_id = t.id
-    LEFT JOIN search_optimization s ON p.search_optimization_id = s.id
-    LEFT JOIN usability_optimization u ON p.usability_optimization_id = u.id
-    LEFT JOIN content c ON p.content_id = c.id
-    LEFT JOIN regional_promotion r ON p.regional_promotion_id = r.id
-    LEFT JOIN chosed_problem cp ON p.chosed_problem_id = cp.id
-    WHERE p.id = ?
-  `);
-  const row = stmt.get(id)
+  // Получаем основную информацию о проекте
+  const projectStmt = db.prepare('SELECT * FROM projects WHERE id = ?');
+  const projectRow = projectStmt.get(id);
+
+  if (!projectRow) return undefined;
+
+  // Получаем проблемы проекта
+  const problemsStmt = db.prepare('SELECT * FROM problem WHERE project_id = ?');
+  const problemsRows = problemsStmt.all(id);
+
+  // Преобразуем массив проблем в объект
+  const problems: { [name: string]: { id: number; project_id: number; content: string; screenshot_html: string } } = {};
+
+  problemsRows.forEach(problem => {
+    problems[problem.name] = {
+      id: problem.id,
+      project_id: problem.project_id,
+      content: problem.content,
+      screenshot_html: problem.screenshot_html
+    };
+  });
 
   const projectData: ProjectData = {
-    company_name: row.company_name,
-    client_name: row.client_name,
-    project_name: row.project_name,
-    grow_points: row.grow_points,
-    style_and_tone: row.style_and_tone,
-    set_tone_ai: row.set_tone_ai,
-
-    technical_optimization: {
-      slow_loading: row.t_slow_loading,
-      redirect_chains: row.t_redirect_chains,
-      redirect_loops: row.t_redirect_loops,
-      response_3xx: row.t_response_3xx,
-      response_4xx: row.t_response_4xx,
-      broken_links: row.t_broken_links,
-      no_https: row.t_no_https,
-      http_https_mixed: row.t_http_https_mixed,
-      html_errors: row.t_html_errors,
-    },
-
-    search_optimization: {
-      low_social_engagement: row.s_low_social_engagement,
-      title_tag_not_optimized: row.s_title_tag_not_optimized,
-      description_tag_not_optimized: row.s_description_tag_not_optimized,
-      weak_internal_linking: row.s_weak_internal_linking,
-      duplicate_meta_tags: row.s_duplicate_meta_tags,
-      no_html_sitemap: row.s_no_html_sitemap,
-      no_microdata: row.s_no_microdata,
-      robots_txt_incorrect: row.s_robots_txt_incorrect,
-      sitemap_incomplete: row.s_sitemap_incomplete,
-      hidden_headings: row.s_hidden_headings,
-      sitemap_missing: row.s_sitemap_missing,
-      sitemap_no_lastmod: row.s_sitemap_no_lastmod,
-      sitemap_rare_updates: row.s_sitemap_rare_updates,
-      no_breadcrumbs: row.s_no_breadcrumbs,
-      product_filter_not_optimized: row.s_product_filter_not_optimized,
-      product_filter_simplified: row.s_product_filter_simplified,
-      no_prices_landing: row.s_no_prices_landing,
-      no_product_description: row.s_no_product_description,
-      missing_product_specs: row.s_missing_product_specs,
-      empty_categories: row.s_empty_categories,
-      important_pages_not_in_menu: row.s_important_pages_not_in_menu,
-      no_category_structure: row.s_no_category_structure,
-      no_catalog_page: row.s_no_catalog_page,
-      no_text_blocks: row.s_no_text_blocks,
-      text_overoptimization: row.s_text_overoptimization,
-      non_unique_text: row.s_non_unique_text,
-      missing_text_pages: row.s_missing_text_pages,
-      duplicate_text: row.s_duplicate_text,
-      non_unique_content: row.s_non_unique_content,
-      product_names_not_optimized: row.s_product_names_not_optimized,
-      image_alt_title_not_optimized: row.s_image_alt_title_not_optimized,
-      urls_not_optimized: row.s_urls_not_optimized,
-      h2_missing_or_bad: row.s_h2_missing_or_bad,
-      h1_missing: row.s_h1_missing,
-      multiple_h1: row.s_multiple_h1,
-      heading_hierarchy_broken: row.s_heading_hierarchy_broken,
-      h1_after_other_headings: row.s_h1_after_other_headings,
-      h1_not_optimized: row.s_h1_not_optimized,
-    },
-
-    usability_optimization: {
-      responsive_errors: row.u_responsive_errors,
-      phone_not_clickable_mobile: row.u_phone_not_clickable_mobile,
-      not_mobile_adapted: row.u_not_mobile_adapted,
-      cart_functionality_missing: row.u_cart_functionality_missing,
-      cart_link_missing_header: row.u_cart_link_missing_header,
-      cart_functionality_broken: row.u_cart_functionality_broken,
-      buy_button_missing_catalog: row.u_buy_button_missing_catalog,
-      no_add_to_cart_feedback: row.u_no_add_to_cart_feedback,
-      email_not_clickable_header: row.u_email_not_clickable_header,
-      product_filter_missing: row.u_product_filter_missing,
-      site_search_missing: row.u_site_search_missing,
-      site_search_errors: row.u_site_search_errors,
-      callback_function_missing: row.u_callback_function_missing,
-      contact_form_missing: row.u_contact_form_missing,
-      usability_elements_missing: row.u_usability_elements_missing,
-    },
-
-    content: {
-      few_pages_for_seo: row.c_few_pages_for_seo,
-      missing_blocks: row.c_missing_blocks,
-      insufficient_assortment: row.c_insufficient_assortment,
-      insufficient_landing_pages: row.c_insufficient_landing_pages,
-      duplicate_content_pages: row.c_duplicate_content_pages,
-      incorrect_404_page: row.c_incorrect_404_page,
-      missing_product_photos: row.c_missing_product_photos,
-      low_quality_photos: row.c_low_quality_photos,
-    },
-
-    regional_promotion: {
-      regional_subdomains_not_optimized: row.r_regional_subdomains_not_optimized,
-      branch_subdomains_missing: row.r_branch_subdomains_missing,
-      region_mismatch: row.r_region_mismatch,
-    },
-
-    chosed_problem: {
-      content: row.cp_content,
-      screenshot: row.cp_screenshot,
-    },
+    id: projectRow.id,
+    company_name: projectRow.company_name,
+    client_name: projectRow.client_name,
+    project_name: projectRow.project_name,
+    audit_goal: projectRow.audit_goal,
+    traffic_analysis: projectRow.traffic_analysis,
+    grow_points: projectRow.grow_points,
+    logo_url: projectRow.logo_url,
+    background_url: projectRow.background_url,
+    color: projectRow.color,
+    created_at: projectRow.created_at,
+    updated_at: projectRow.updated_at,
+    problems
   };
 
   return projectData;
 }
 
-
-// Создание нового проекта
 export async function createProject(projectData: ProjectData): number {
   const transaction = db.transaction(() => {
     const technicalStmt = db.prepare(`
