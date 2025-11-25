@@ -32,54 +32,21 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { problemLibrary } from '@/lib/data';
-import type { Branding, Problem, Proposal } from '@/lib/types';
+import {Branding, Problem, Proposal, EditorSidebarProps, ProjectData} from '@/lib/types';
 import { PropoCraftIcon } from './icons';
 import { Textarea } from './ui/textarea';
 
-interface EditorSidebarProps {
-  proposal: Proposal;
-  setProposal: Dispatch<SetStateAction<Proposal>>;
-  branding: Branding;
-  setBranding: Dispatch<SetStateAction<Branding>>;
-  selectedProblems: Problem[];
-  setSelectedProblems: Dispatch<SetStateAction<Problem[]>>;
-  adjustTone: (tone: string) => Promise<void>;
-  isAdjustingTone: boolean;
-  auditGoalText: string;
-  setAuditGoalText: Dispatch<SetStateAction<string>>;
-  growthPointsText: string;
-  setGrowthPointsText: Dispatch<SetStateAction<string>>;
-}
 
 export default function EditorSidebar({
-  proposal,
-  setProposal,
-  branding,
-  setBranding,
-  selectedProblems,
-  setSelectedProblems,
-  adjustTone,
-  isAdjustingTone,
-  auditGoalText,
-  setAuditGoalText,
-  growthPointsText,
-  setGrowthPointsText,
-}: EditorSidebarProps) {
-  const handleProblemSelection = (problem: Problem, checked: boolean) => {
-    setSelectedProblems((prev) =>
-      checked ? [...prev, { ...problem }] : prev.filter((p) => p.id !== problem.id)
-    );
-  };
+    projectData,
+    proposal,
+    setProposal,
+    branding,
+    setBranding,
+    adjustTone,
+    isAdjustingTone,
 
-  const handleProblemUpdate = (
-    id: string,
-    field: keyof Problem,
-    value: string
-  ) => {
-    setSelectedProblems((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, [field]: value } : p))
-    );
-  };
+}: EditorSidebarProps) {
 
   const handleScreenshotUpload = (
     id: string,
@@ -91,11 +58,6 @@ export default function EditorSidebar({
       reader.onloadend = () => {
         const imageUrl = reader.result as string;
         const imageMarkdown = `\n\n<img src="${imageUrl}" alt="Скриншот" style="width: 100%; border-radius: 0.5rem; margin-top: 1rem;"/>\n\n`;
-        setSelectedProblems((prev) =>
-          prev.map((p) =>
-            p.id === id ? { ...p, content: p.content + imageMarkdown } : p
-          )
-        );
       };
       reader.readAsDataURL(file);
     }
@@ -117,12 +79,6 @@ export default function EditorSidebar({
             const end = textarea.selectionEnd;
             const currentContent = textarea.value;
             const newContent = currentContent.substring(0, start) + imageMarkdown + currentContent.substring(end);
-
-            setSelectedProblems(prev =>
-              prev.map(p =>
-                p.id === id ? { ...p, content: newContent } : p
-              )
-            );
           };
           reader.readAsDataURL(file);
           e.preventDefault();
@@ -185,8 +141,7 @@ export default function EditorSidebar({
                   <Input
                     id="companyName"
                     name="companyName"
-                    value={branding.companyName}
-                    onChange={handleBrandingChange}
+                    value={projectData.company_name}
                     placeholder="например, Innovate Solutions"
                   />
                 </div>
@@ -195,8 +150,7 @@ export default function EditorSidebar({
                   <Input
                     id="clientName"
                     name="clientName"
-                    value={proposal.clientName}
-                    onChange={handleProposalChange}
+                    value={projectData.client_name}
                     placeholder="например, Globex Corporation"
                   />
                 </div>
@@ -205,7 +159,7 @@ export default function EditorSidebar({
                   <Input
                     id="projectName"
                     name="projectName"
-                    value={proposal.projectName}
+                    value={projectData.project_name}
                     onChange={handleProposalChange}
                     placeholder="например, Редизайн сайта"
                   />

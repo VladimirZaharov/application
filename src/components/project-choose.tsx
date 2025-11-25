@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRouter } from 'next/navigation';
@@ -9,6 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import {ProjectsList, ProjectData} from "@/lib/types"
 
 const formSchema = z.object({
   projectName: z.string().min(1, { message: "Название проекта обязательно" }).max(100, { message: "Название проекта должно быть не более 100 символов" }),
@@ -16,6 +18,9 @@ const formSchema = z.object({
 
 export default function ProjectChoose() {
   const router = useRouter();
+  const [mockProjects, setProjects] = useState<ProjectsList[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -23,7 +28,28 @@ export default function ProjectChoose() {
       projectName: "",
     },
   });
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/projects');
+        if (!response.ok) {
+          throw new Error('Ошибка при загрузке проектов');
+        }
 
+        const data = await response.json();
+        debugger
+        setProjects(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Неизвестная ошибка');
+        console.error('Error fetching projects:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
   const handleCreateNewProject = (values: z.infer<typeof formSchema>) => {
     if (values.projectName.trim()) {
       // In a real app, you would save the project to a database
@@ -32,17 +58,9 @@ export default function ProjectChoose() {
     }
   };
 
-  const handleSelectProject = (projectId: string) => {
-    // In a real app, you would load the project from database
-    router.push(`/editor?projectId=${projectId}`);
+  const handleSelectProject = (projectId: number) => {
+    router.push(`/editor/${projectId}`);
   };
-
-  // Mock projects for demonstration
-  const mockProjects = [
-    { id: '1', name: 'Проект по оптимизации сайта', lastModified: '2023-11-15' },
-    { id: '2', name: 'Стратегия продвижения в поиске', lastModified: '2023-11-10' },
-    { id: '3', name: 'Анализ конкурентов', lastModified: '2023-11-05' },
-  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#EFF5FF] to-[#E6EEF7] flex flex-col">
@@ -106,8 +124,8 @@ export default function ProjectChoose() {
                           className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors border-[#D0D8E6]"
                           onClick={() => handleSelectProject(project.id)}
                         >
-                          <div className="font-medium text-[#2D4777]">{project.name}</div>
-                          <div className="text-sm text-gray-500 mt-1">Последнее изменение: {new Date(project.lastModified).toLocaleDateString('ru-RU')}</div>
+                          <div className="font-medium text-[#2D4777]">{project.project_name}</div>
+                          <div className="text-sm text-gray-500 mt-1">Последнее изменение: {new Date(project.updated_at).toLocaleDateString('ru-RU')}</div>
                         </div>
                       ))
                     ) : (
