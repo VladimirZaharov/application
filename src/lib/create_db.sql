@@ -3,6 +3,18 @@ CREATE TABLE IF NOT EXISTS projects (
       company_name TEXT,
       client_name TEXT,
       project_name TEXT,
+      audit_goal TEXT,
+      traffic_analysis TEXT,
+
+
+CREATE TABLE IF NOT EXISTS problem (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    project_id INTEGER,
+    content TEXT,
+
+
+
       technical_optimization_id INTEGER,
       search_optimization_id INTEGER,
       usability_optimization_id INTEGER,
