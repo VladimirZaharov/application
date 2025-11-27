@@ -45,21 +45,19 @@ export interface ProjectData {
       project_id: number;
       content: string;
       screenshot_html: string;
+      is_selected: Buffer;
     };
   };
 }
 export interface PageProps {
   params: Promise<{
     projectId: string;
+    projectName: string;
   }>;
 }
 
 export interface EditorSidebarProps {
   projectData: ProjectData,
-  proposal: Proposal;
-  setProposal: Dispatch<SetStateAction<Proposal>>;
-  branding: Branding;
-  setBranding: Dispatch<SetStateAction<Branding>>;
   adjustTone: (tone: string) => Promise<void>;
   isAdjustingTone: boolean;
 }

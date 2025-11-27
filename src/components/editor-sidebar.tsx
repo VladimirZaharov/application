@@ -1,391 +1,463 @@
 'use client';
 
-import type { ChangeEvent, ClipboardEvent, Dispatch, SetStateAction } from 'react';
+import type {ChangeEvent, ClipboardEvent, Dispatch, SetStateAction} from 'react';
+import {useState} from 'react';
 import {
-  Bot,
-  Brush,
-  Download,
-  FileText,
-  ImageIcon,
-  Library,
-  Loader2,
-  Settings,
-  TrendingUp,
+    BarChart,
+    Save,
+    Bot,
+    Brush,
+    Download,
+    FileText,
+    ImageIcon,
+    Library,
+    Loader2,
+    Settings,
+    TrendingUp,
 } from 'lucide-react';
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import {Button} from '@/components/ui/button';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
+import {Checkbox} from '@/components/ui/checkbox';
+import {Input} from '@/components/ui/input';
+import {Label} from '@/components/ui/label';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { problemLibrary } from '@/lib/data';
-import {Branding, Problem, Proposal, EditorSidebarProps, ProjectData} from '@/lib/types';
-import { PropoCraftIcon } from './icons';
-import { Textarea } from './ui/textarea';
+import {Separator} from '@/components/ui/separator';
+import {problemLibrary} from '@/lib/data';
+import {Problem, EditorSidebarProps, ProjectData} from '@/lib/types';
+import {PropoCraftIcon} from './icons';
+import {Textarea} from './ui/textarea';
 
 
 export default function EditorSidebar({
-    projectData,
-    proposal,
-    setProposal,
-    branding,
-    setBranding,
-    adjustTone,
-    isAdjustingTone,
+                                          projectData,
+                                          adjustTone,
+                                          isAdjustingTone,
 
-}: EditorSidebarProps) {
-
-  const handleScreenshotUpload = (
-    id: string,
-    e: ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const imageUrl = reader.result as string;
-        const imageMarkdown = `\n\n<img src="${imageUrl}" alt="Скриншот" style="width: 100%; border-radius: 0.5rem; margin-top: 1rem;"/>\n\n`;
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handlePaste = (id: string, e: ClipboardEvent<HTMLTextAreaElement>) => {
-    const items = e.clipboardData.items;
-    for (let i = 0; i < items.length; i++) {
-      if (items[i].type.indexOf('image') !== -1) {
-        const file = items[i].getAsFile();
+                                      }: EditorSidebarProps) {
+    const [formData, setFormData] = useState({
+        ...projectData
+    });
+    const handleScreenshotUpload = (
+        problemData: string,
+        e: ChangeEvent<HTMLInputElement>,
+    ) => {
+        const file = e.target.files?.[0];
         if (file) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const imageUrl = reader.result as string;
-            const imageMarkdown = `\n<img src="${imageUrl}" alt="Вставленное изображение" style="width: 100%; border-radius: 0.5rem; margin-top: 1rem;"/>\n`;
-            
-            const textarea = e.target as HTMLTextAreaElement;
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const currentContent = textarea.value;
-            const newContent = currentContent.substring(0, start) + imageMarkdown + currentContent.substring(end);
-          };
-          reader.readAsDataURL(file);
-          e.preventDefault();
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const imageUrl = reader.result as string;
+                const imageMarkdown = `\n\n<img src="${imageUrl}" alt="Скриншот" style="width: 100%; border-radius: 0.5rem; margin-top: 1rem;"/>\n\n`;
+                problemData += imageMarkdown;
+            };
+            // reader.readAsDataURL(file);
         }
-      }
-    }
-  };
+    };
 
-  const handleBrandingChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setBranding((prev) => ({ ...prev, [name]: value }));
-  };
+    const handlePaste = (id: string, e: ClipboardEvent<HTMLTextAreaElement>) => {
+        const items = e.clipboardData.items;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+                const file = items[i].getAsFile();
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        const imageUrl = reader.result as string;
+                        const imageMarkdown = `\n<img src="${imageUrl}" alt="Вставленное изображение" style="width: 100%; border-radius: 0.5rem; margin-top: 1rem;"/>\n`;
 
-  const handleProposalChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setProposal((prev) => ({ ...prev, [name]: value }));
-  };
+                        const textarea = e.target as HTMLTextAreaElement;
+                        const start = textarea.selectionStart;
+                        const end = textarea.selectionEnd;
+                        const currentContent = textarea.value;
+                        const newContent = currentContent.substring(0, start) + imageMarkdown + currentContent.substring(end);
+                    };
+                    reader.readAsDataURL(file);
+                    e.preventDefault();
+                }
+            }
+        }
+    };
 
-  const handlePrint = () => {
-    window.print();
-  };
+    const handleInputChange = (field: keyof ProjectData) => (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        setFormData(prev => ({
+            ...prev,
+            [field]: e.target.value
+        }));
+    };
 
-  const problemsByCategory = problemLibrary.reduce((acc, problem) => {
-    const { category } = problem;
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(problem);
-    return acc;
-  }, {} as Record<string, Problem[]>);
+    const handleProblemCheckboxChange = (problemId: string) => (
+        checked: boolean
+    ) => {
+        setFormData(prev => ({
+            ...prev,
+            problems: {
+                ...prev.problems,
+                [problemId]: {
+                    ...prev.problems[problemId],
+                    is_selected: Buffer.from([checked ? 1 : 0])
+                }
+            }
+        }));
+    };
 
-  return (
-    <aside className="w-[600px] p-4 sm:p-6 md:p-10 bg-transparent print-container">
-      <Card className="h-full max-h-screen flex flex-col rounded-lg border shadow-lg">
-        <CardHeader className="flex flex-row items-center justify-between p-4 border-b">
-          <div className="flex items-center gap-3">
-            <PropoCraftIcon className="h-7 w-7 text-primary" />
-            <CardTitle className="text-xl font-headline">Редактор PropoCraft</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0 flex-grow overflow-y-auto">
-          <Accordion
-            type="multiple"
-            defaultValue={['settings', 'content', 'style', 'audit-goal', 'traffic-analysis']}
-            className="w-full"
-          >
-            <AccordionItem value="settings">
-              <AccordionTrigger className="px-4 text-base font-semibold">
-                <div className="flex items-center gap-2">
-                  <Settings className="h-5 w-5" />
-                  Детали предложения
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="p-4 space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="companyName">Название вашей компании</Label>
-                  <Input
-                    id="companyName"
-                    name="companyName"
-                    value={projectData.company_name}
-                    onChange={handleBrandingChange}
-                    placeholder={branding.companyName}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="clientName">Имя клиента</Label>
-                  <Input
-                    id="clientName"
-                    name="clientName"
-                    value={projectData.client_name}
-                    placeholder={proposal.clientName}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="projectName">Название проекта</Label>
-                  <Input
-                    id="projectName"
-                    name="projectName"
-                    value={projectData.project_name}
-                    placeholder={proposal.projectName}
-                  />
-                </div>
-              </AccordionContent>
-            </AccordionItem>
+    const handleProblemTextChange = (problemId: string, field: 'content' | 'screenshot_html') => (
+        e: React.ChangeEvent<HTMLTextAreaElement>
+    ) => {
+        setFormData(prev => ({
+            ...prev,
+            problems: {
+                ...prev.problems,
+                [problemId]: {
+                    ...prev.problems[problemId],
+                    [field]: e.target.value
+                }
+            }
+        }));
+    };
 
-             <AccordionItem value="audit-goal">
-              <AccordionTrigger className="px-4 text-base font-semibold">
-                <div className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
-                  Цель аудита
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="p-4 space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="audit-goal-content">Содержание</Label>
-                  <Textarea
-                    id="audit-goal-content"
-                    value={auditGoalText}
-                    onChange={(e) => setAuditGoalText(e.target.value)}
-                    rows={8}
-                    placeholder={auditGoalText}
-                  />
-                </div>
-              </AccordionContent>
-            </AccordionItem>
+    const saveData = async (formData: ProjectData) => {
+        if (formData.id) {
+            const response = await fetch('api/projects', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            },);
+            if (!response.ok) {
+                throw new Error('Ошибка при сохранении проекта');
+            }
+        } else {
+            const response = await fetch('/api/projects', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            },);
+            if (!response.ok) {
+                throw new Error('Ошибка при сохранении проекта');
+            }
+            const data = await response.json();
+            setFormData(prev => ({
+                ...prev,
+                id: +data.id
+            }));
+        }
 
-            <AccordionItem value="traffic-analysis">
-              <AccordionTrigger className="px-4 text-base font-semibold">
-                <div className="flex items-center gap-2">
-                  <BarChart className="h-5 w-5" />
-                  Анализ трафика
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="p-4 space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="traffic-analysis-content">Содержание</Label>
-                  <Textarea
-                    id="traffic-analysis-content"
-                    value={trafficAnalysisText}
-                    onChange={(e) => setTrafficAnalysisText(e.target.value)}
-                    rows={12}
-                    placeholder="Опишите здесь анализ трафика..."
-                  />
-                </div>
-              </AccordionContent>
-            </AccordionItem>
 
-            <AccordionItem value="content">
-              <AccordionTrigger className="px-4 text-base font-semibold">
-                <div className="flex items-center gap-2">
-                  <Library className="h-5 w-5" />
-                  Библиотека проблем
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="p-4 space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  Выберите проблемы, которые будет решать это предложение.
-                </p>
-                {Object.entries(problemsByCategory).map(([category, problems]) => (
-                  <Accordion type="multiple" className="space-y-2" key={category}>
-                     <AccordionItem value={category} className="border-b-0">
-                        <AccordionTrigger className="p-2 text-sm font-semibold text-primary hover:bg-secondary rounded-md">
-                           {category}
-                        </AccordionTrigger>
-                        <AccordionContent className="p-2 space-y-2">
-                          {problems.map((problem) => {
-                            const isSelected = selectedProblems.some((p) => p.id === problem.id);
-                            const selectedProblem = selectedProblems.find((p) => p.id === problem.id);
+        const handlePrint = () => {
+            window.print();
+        };
 
-                            return (
-                              <Accordion type="multiple" key={problem.id} className="space-y-2">
-                                <AccordionItem value={problem.id} className="border rounded-md">
-                                  <div className="flex items-start space-x-2 p-2 rounded-md transition-colors">
-                                    <Checkbox
-                                      id={`lib-${problem.id}`}
-                                      checked={isSelected}
-                                      onCheckedChange={(checked) => handleProblemSelection(problem, !!checked)}
-                                    />
-                                    <AccordionTrigger className="p-0 flex-1 justify-start">
-                                      <label
-                                        htmlFor={`lib-${problem.id}`}
-                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                      >
-                                        {problem.title}
-                                      </label>
-                                    </AccordionTrigger>
-                                  </div>
-                                  {isSelected && selectedProblem && (
-                                    <AccordionContent className="p-4 border-t">
-                                        <div className="space-y-2">
-                                          <Label htmlFor={`content-${problem.id}`}>Содержание</Label>
-                                          <Textarea
-                                            id={`content-${problem.id}`}
-                                            value={selectedProblem.content}
-                                            onChange={(e) => handleProblemUpdate(problem.id, 'content', e.target.value)}
-                                            onPaste={(e) => handlePaste(problem.id, e)}
+        const problemsByCategory = problemLibrary.reduce((acc, problem) => {
+            const {category} = problem;
+            if (!acc[category]) {
+                acc[category] = [];
+            }
+            acc[category].push(problem);
+            return acc;
+        }, {} as Record<string, Problem[]>);
+        debugger
+        return (
+            <aside className="w-[600px] p-4 sm:p-6 md:p-10 bg-transparent print-container">
+                <Card className="h-full max-h-screen flex flex-col rounded-lg border shadow-lg">
+                    <CardHeader className="flex flex-row items-center justify-between p-4 border-b">
+                        <div className="flex items-center gap-3">
+                            <PropoCraftIcon className="h-7 w-7 text-primary"/>
+                            <CardTitle className="text-xl font-headline">Редактор PropoCraft</CardTitle>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="p-0 flex-grow overflow-y-auto">
+                        <Accordion
+                            type="multiple"
+                            defaultValue={['settings', 'content', 'style', 'audit-goal', 'traffic-analysis']}
+                            className="w-full"
+                        >
+                            <AccordionItem value="settings">
+                                <AccordionTrigger className="px-4 text-base font-semibold">
+                                    <div className="flex items-center gap-2">
+                                        <Settings className="h-5 w-5"/>
+                                        Детали предложения
+                                    </div>
+                                </AccordionTrigger>
+                                <AccordionContent className="p-4 space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="companyName">Название вашей компании</Label>
+                                        <Input
+                                            id="companyName"
+                                            name="companyName"
+                                            value={formData.company_name}
+                                            onChange={handleInputChange('company_name')}
+                                            placeholder="например, Innovate Solutions"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="clientName">Имя клиента</Label>
+                                        <Input
+                                            id="clientName"
+                                            name="clientName"
+                                            value={formData.client_name}
+                                            onChange={handleInputChange('client_name')}
+                                            placeholder="например, Globex Corporation"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="projectName">Название проекта</Label>
+                                        <Input
+                                            id="projectName"
+                                            name="projectName"
+                                            value={formData.project_name}
+                                            onChange={handleInputChange('project_name')}
+                                            placeholder="например, Редизайн сайта"
+                                        />
+                                    </div>
+                                </AccordionContent>
+                            </AccordionItem>
+
+                            <AccordionItem value="audit-goal">
+                                <AccordionTrigger className="px-4 text-base font-semibold">
+                                    <div className="flex items-center gap-2">
+                                        <FileText className="h-5 w-5"/>
+                                        Цель аудита
+                                    </div>
+                                </AccordionTrigger>
+                                <AccordionContent className="p-4 space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="audit-goal-content">Содержание</Label>
+                                        <Textarea
+                                            id="audit-goal-content"
+                                            value={formData.audit_goal}
+                                            onChange={handleInputChange('audit_goal')}
                                             rows={8}
-                                          />
-                                        </div>
-                                        <div className="space-y-2 mt-4">
-                                          <Label htmlFor={`screenshot-upload-${problem.id}`} className="text-sm font-medium">Добавить скриншот в содержание</Label>
-                                          <Input id={`screenshot-upload-${problem.id}`} type="file" className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100" accept="image/*" onChange={(e) => handleScreenshotUpload(problem.id, e)} />
-                                        </div>
-                                    </AccordionContent>
-                                  )}
-                                </AccordionItem>
-                              </Accordion>
-                            );
-                          })}
-                        </AccordionContent>
-                     </AccordionItem>
-                  </Accordion>
-                ))}
-              </AccordionContent>
-            </AccordionItem>
+                                            placeholder="Опишите здесь цель аудита..."
+                                        />
+                                    </div>
+                                </AccordionContent>
+                            </AccordionItem>
 
-            <AccordionItem value="growth-points">
-              <AccordionTrigger className="px-4 text-base font-semibold">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5" />
-                  Точки роста
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="p-4 space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="growth-points-content">Содержание</Label>
-                  <Textarea
-                    id="growth-points-content"
-                    value={growthPointsText}
-                    onChange={(e) => setGrowthPointsText(e.target.value)}
-                    rows={8}
-                    placeholder="Опишите здесь предлагаемое решение и точки роста..."
-                  />
-                </div>
-              </AccordionContent>
-            </AccordionItem>
+                            <AccordionItem value="traffic-analysis">
+                                <AccordionTrigger className="px-4 text-base font-semibold">
+                                    <div className="flex items-center gap-2">
+                                        <BarChart className="h-5 w-5"/>
+                                        Анализ трафика
+                                    </div>
+                                </AccordionTrigger>
+                                <AccordionContent className="p-4 space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="traffic-analysis-content">Содержание</Label>
+                                        <Textarea
+                                            id="traffic-analysis-content"
+                                            value={formData.traffic_analysis}
+                                            onChange={handleInputChange('traffic_analysis')}
+                                            rows={12}
+                                            placeholder="Опишите здесь анализ трафика..."
+                                        />
+                                    </div>
+                                </AccordionContent>
+                            </AccordionItem>
 
-            <AccordionItem value="style">
-              <AccordionTrigger className="px-4 text-base font-semibold">
-                <div className="flex items-center gap-2">
-                  <Brush className="h-5 w-5" />
-                  Стиль и тон
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="p-4 space-y-6">
-                <div className="space-y-4">
-                   <h4 className="font-medium flex items-center gap-2"><ImageIcon className="w-4 h-4" /> Брендинг и фон</h4>
-                   <div className="space-y-2">
-                    <Label htmlFor="logoUrl">URL логотипа</Label>
-                    <Input
-                      id="logoUrl"
-                      name="logoUrl"
-                      value={branding.logoUrl}
-                      onChange={handleBrandingChange}
-                      placeholder="https://your-logo.com/logo.png"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="backgroundUrl">URL фонового изображения</Label>
-                    <Input
-                      id="backgroundUrl"
-                      name="backgroundUrl"
-                      value={branding.backgroundUrl}
-                      onChange={handleBrandingChange}
-                      placeholder="https://image.com/background.png"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="accentColor">Акцентный цвет</Label>
-                    <div className="relative">
-                      <Input
-                        id="accentColor"
-                        name="accentColor"
-                        type="text"
-                        value={branding.accentColor}
-                        onChange={handleBrandingChange}
-                        className="pr-12"
-                      />
-                      <input
-                        type="color"
-                        value={branding.accentColor}
-                        onChange={(e) => setBranding(prev => ({ ...prev, accentColor: e.target.value }))}
-                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-10 p-1 border rounded-md cursor-pointer bg-transparent"
-                      />
+                            <AccordionItem value="content">
+                                <AccordionTrigger className="px-4 text-base font-semibold">
+                                    <div className="flex items-center gap-2">
+                                        <Library className="h-5 w-5"/>
+                                        Библиотека проблем
+                                    </div>
+                                </AccordionTrigger>
+                                <AccordionContent className="p-4 space-y-3">
+                                    <p className="text-sm text-muted-foreground">
+                                        Выберите проблемы, которые будет решать это предложение.
+                                    </p>
+                                    {Object.entries(problemsByCategory).map(([category, problems]) => (
+                                        <Accordion type="multiple" className="space-y-2" key={category}>
+                                            <AccordionItem value={category} className="border-b-0">
+                                                <AccordionTrigger
+                                                    className="p-2 text-sm font-semibold text-primary hover:bg-secondary rounded-md">
+                                                    {category}
+                                                </AccordionTrigger>
+                                                <AccordionContent className="p-2 space-y-2">
+                                                    {problems.map((problem) => {
+                                                        return (
+                                                            <Accordion type="multiple" key={problem.id}
+                                                                       className="space-y-2">
+                                                                <AccordionItem value={problem.id}
+                                                                               className="border rounded-md">
+                                                                    <div
+                                                                        className="flex items-start space-x-2 p-2 rounded-md transition-colors">
+                                                                        <Checkbox
+                                                                            id={`lib-${problem.id}`}
+                                                                            checked={formData.problems?.[problem.id]?.is_selected}
+                                                                            onCheckedChange={handleProblemCheckboxChange(problem.id)}
+                                                                        />
+                                                                        <AccordionTrigger
+                                                                            className="p-0 flex-1 justify-start">
+                                                                            <label
+                                                                                htmlFor={`lib-${problem.id}`}
+                                                                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                                            >
+                                                                                {problem.title}
+                                                                            </label>
+                                                                        </AccordionTrigger>
+                                                                    </div>
+                                                                    {formData.problems?.[problem.id]?.is_selected && (
+                                                                        <AccordionContent className="p-4 border-t">
+                                                                            <div className="space-y-2">
+                                                                                <Label
+                                                                                    htmlFor={`content-${problem.id}`}>Содержание</Label>
+                                                                                <Textarea
+                                                                                    id={`content-${problem.id}`}
+                                                                                    value={formData.problems?.[problem.id]?.content}
+                                                                                    onChange={handleProblemTextChange(problem.id, 'content')}
+                                                                                    rows={8}
+                                                                                />
+                                                                            </div>
+                                                                            <div className="space-y-2 mt-4">
+                                                                                <Label
+                                                                                    htmlFor={`screenshot-upload-${problem.id}`}
+                                                                                    className="text-sm font-medium">Добавить
+                                                                                    скриншот в содержание</Label>
+                                                                                <Input
+                                                                                    id={`screenshot-upload-${problem.id}`}
+                                                                                    type="file"
+                                                                                    className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+                                                                                    accept="image/*"
+                                                                                    onChange={(e) => handleScreenshotUpload(formData.problems[problem.id].screenshot_html, e)}/>
+                                                                            </div>
+                                                                        </AccordionContent>
+                                                                    )}
+                                                                </AccordionItem>
+                                                            </Accordion>
+                                                        );
+                                                    })}
+                                                </AccordionContent>
+                                            </AccordionItem>
+                                        </Accordion>
+                                    ))}
+                                </AccordionContent>
+                            </AccordionItem>
+
+                            <AccordionItem value="growth-points">
+                                <AccordionTrigger className="px-4 text-base font-semibold">
+                                    <div className="flex items-center gap-2">
+                                        <TrendingUp className="h-5 w-5"/>
+                                        Точки роста
+                                    </div>
+                                </AccordionTrigger>
+                                <AccordionContent className="p-4 space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="growth-points-content">Содержание</Label>
+                                        <Textarea
+                                            id="growth-points-content"
+                                            value={formData.grow_points}
+                                            onChange={handleInputChange('grow_points')}
+                                            rows={8}
+                                            placeholder="Опишите здесь предлагаемое решение и точки роста..."
+                                        />
+                                    </div>
+                                </AccordionContent>
+                            </AccordionItem>
+
+                            <AccordionItem value="style">
+                                <AccordionTrigger className="px-4 text-base font-semibold">
+                                    <div className="flex items-center gap-2">
+                                        <Brush className="h-5 w-5"/>
+                                        Стиль и тон
+                                    </div>
+                                </AccordionTrigger>
+                                <AccordionContent className="p-4 space-y-6">
+                                    <div className="space-y-4">
+                                        <h4 className="font-medium flex items-center gap-2"><ImageIcon
+                                            className="w-4 h-4"/> Брендинг и фон</h4>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="logoUrl">URL логотипа</Label>
+                                            <Input
+                                                id="logoUrl"
+                                                name="logoUrl"
+                                                value={formData.logo_url}
+                                                onChange={handleInputChange('logo_url')}
+                                                placeholder="https://your-logo.com/logo.png"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="backgroundUrl">URL фонового изображения</Label>
+                                            <Input
+                                                id="backgroundUrl"
+                                                name="backgroundUrl"
+                                                value={formData.background_url}
+                                                onChange={handleInputChange('background_url')}
+                                                placeholder="https://image.com/background.png"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="accentColor">Акцентный цвет</Label>
+                                            <div className="relative">
+                                                <Input
+                                                    id="accentColor"
+                                                    name="accentColor"
+                                                    type="text"
+                                                    value={formData.color}
+                                                    onChange={handleInputChange('color')}
+                                                    className="pr-12"
+                                                />
+                                                <input
+                                                    type="color"
+                                                    value={formData.color}
+                                                    onChange={handleInputChange('color')}
+                                                    className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-10 p-1 border rounded-md cursor-pointer bg-transparent"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <Separator/>
+                                    <div className="space-y-4">
+                                        <h4 className="font-medium flex items-center gap-2"><Bot
+                                            className="w-4 h-4"/> Настройка тона с помощью ИИ</h4>
+                                        <Select onValueChange={adjustTone} disabled={isAdjustingTone}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Выберите тон..."/>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="formal">Формальный</SelectItem>
+                                                <SelectItem value="casual">Неформальный</SelectItem>
+                                                <SelectItem value="technical">Технический</SelectItem>
+                                                <SelectItem value="persuasive">Убедительный</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        {isAdjustingTone && (
+                                            <div className="flex items-center text-sm text-muted-foreground">
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                                                Настройка тона...
+                                            </div>
+                                        )}
+                                    </div>
+                                </AccordionContent>
+                            </AccordionItem>
+                        </Accordion>
+                    </CardContent>
+                    <div className="p-4 border-t mt-auto flex items-center gap-2">
+                        <Button onClick={saveData(formData)} className="w-full" size="lg">
+                            <Save className="mr-2 h-5 w-5"/>
+                            Сохранить
+                        </Button>
+                        <Button onClick={handlePrint} className="w-full" size="lg" variant="outline">
+                            <Download className="mr-2 h-5 w-5"/>
+                            Скачать как PDF
+                        </Button>
                     </div>
-                  </div>
-                </div>
-                <Separator />
-                <div className="space-y-4">
-                  <h4 className="font-medium flex items-center gap-2"><Bot className="w-4 h-4" /> Настройка тона с помощью ИИ</h4>
-                   <Select onValueChange={adjustTone} disabled={isAdjustingTone}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Выберите тон..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="formal">Формальный</SelectItem>
-                      <SelectItem value="casual">Неформальный</SelectItem>
-                      <SelectItem value="technical">Технический</SelectItem>
-                      <SelectItem value="persuasive">Убедительный</SelectItem>
-                    </SelectContent>
-                  </Select>
-                   {isAdjustingTone && (
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Настройка тона...
-                    </div>
-                  )}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </CardContent>
-        <div className="p-4 border-t mt-auto flex items-center gap-2">
-          <Button onClick={onSave} className="w-full" size="lg" disabled={isSaving}>
-            {isSaving ? (
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            ) : (
-              <Save className="mr-2 h-5 w-5" />
-            )}
-            {isSaving ? 'Сохранение...' : 'Сохранить'}
-          </Button>
-          <Button onClick={handlePrint} className="w-full" size="lg" variant="outline">
-            <Download className="mr-2 h-5 w-5" />
-            Скачать как PDF
-          </Button>
-        </div>
-      </Card>
-    </aside>
-  );
-}
+                </Card>
+            </aside>
+        );
+    }

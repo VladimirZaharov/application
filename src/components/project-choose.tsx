@@ -36,9 +36,7 @@ export default function ProjectChoose() {
         if (!response.ok) {
           throw new Error('Ошибка при загрузке проектов');
         }
-
         const data = await response.json();
-        debugger
         setProjects(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Неизвестная ошибка');
@@ -52,16 +50,14 @@ export default function ProjectChoose() {
   }, []);
   const handleCreateNewProject = (values: z.infer<typeof formSchema>) => {
     if (values.projectName.trim()) {
-      // In a real app, you would save the project to a database
-      // For now, we'll just navigate to the editor with a query parameter
-      router.push(`/editor?projectName=${encodeURIComponent(values.projectName.trim())}`);
+      router.push(`/editor/new_project/${values.projectName}`);
     }
   };
 
   const handleSelectProject = (projectId: number) => {
     router.push(`/editor/${projectId}`);
   };
-
+debugger
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#EFF5FF] to-[#E6EEF7] flex flex-col">
       <div className="flex-1 flex items-center justify-center p-4">

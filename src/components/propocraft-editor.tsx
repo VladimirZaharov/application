@@ -49,7 +49,7 @@ ${growthPointsText}
 Мы рады возможности сотрудничества с вами. Чтобы двигаться дальше, мы предлагаем провести дополнительную встречу для детального обсуждения этого предложения и ответов на любые ваши вопросы.`;
 };
 
-export default function PropoCraftEditor(projectData: ProjectData) {
+export default function PropoCraftEditor({ projectData }: { projectData: ProjectData }) {
     const {toast} = useToast();
     const [isAdjustingTone, startTransition] = useTransition();
 
@@ -112,7 +112,7 @@ export default function PropoCraftEditor(projectData: ProjectData) {
             }
         });
     };
-
+    debugger
     return (
         <div className="flex flex-col md:flex-row h-screen bg-background">
             <div className="md:w-1/2 flex-shrink-0">
@@ -120,10 +120,6 @@ export default function PropoCraftEditor(projectData: ProjectData) {
             </div>
             <EditorSidebar
                 projectData={projectData}
-                proposal={proposal}
-                setProposal={setProposal}
-                branding={branding}
-                setBranding={setBranding}
                 adjustTone={adjustTone}
                 isAdjustingTone={isAdjustingTone}
             />
