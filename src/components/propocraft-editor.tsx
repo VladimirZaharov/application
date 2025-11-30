@@ -112,7 +112,6 @@ export default function PropoCraftEditor({ projectData }: { projectData: Project
             }
         });
     };
-    debugger
     return (
         <div className="flex flex-col md:flex-row h-screen bg-background">
             <div className="md:w-1/2 flex-shrink-0">

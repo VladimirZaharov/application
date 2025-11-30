@@ -2,7 +2,7 @@ import { getAllProjects, createProject, saveProject  } from '@/lib/database';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-    const projects = await getAllProjects();
+    const projects = getAllProjects();
     return NextResponse.json(projects, {
         headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -13,7 +13,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
     const body = await request.json();
-    const projectId = await createProject(body);
+    const projectId = createProject(body);
     return NextResponse.json({ id: projectId }, { status: 201 });
 }
 

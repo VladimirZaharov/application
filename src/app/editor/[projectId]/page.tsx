@@ -4,7 +4,7 @@ import {PageProps} from "@/lib/types";
 import {getProjectById} from "@/lib/database";
 
 export default async function EditorPage({ params }: PageProps) {
-  const projectData = await getProjectById(+((await params).projectId));
+  const projectData = getProjectById(+((await params).projectId));
   if (!projectData) {
     notFound();
   }

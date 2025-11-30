@@ -57,7 +57,6 @@ export default function ProjectChoose() {
   const handleSelectProject = (projectId: number) => {
     router.push(`/editor/${projectId}`);
   };
-debugger
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#EFF5FF] to-[#E6EEF7] flex flex-col">
       <div className="flex-1 flex items-center justify-center p-4">

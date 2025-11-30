@@ -9,19 +9,17 @@ const __dirname = path.dirname(__filename);
 const db = new Database(path.join(__dirname, 'application.db'));
 console.log(path.join(__dirname, 'application.db'))
 
-export async function getAllProjects(): Promise<ProjectsList[]> {
+export function getAllProjects(): Promise<ProjectsList[]> {
   const stmt = db.prepare('SELECT id, project_name, updated_at FROM projects');
   return stmt.all();
 }
 
-export async function getProjectById(id: number): Promise<ProjectData | undefined> {
-  // Получаем основную информацию о проекте
+export function getProjectById(id: number): Promise<ProjectData | undefined> {
   const projectStmt = db.prepare('SELECT * FROM projects WHERE id = ?');
   const projectRow = projectStmt.get(id);
 
   if (!projectRow) return undefined;
 
-  // Получаем проблемы проекта
   const problemsStmt = db.prepare('SELECT * FROM problem WHERE project_id = ?');
   const problemsRows = problemsStmt.all(id);
 
@@ -52,11 +50,17 @@ export async function getProjectById(id: number): Promise<ProjectData | undefine
     updated_at: projectRow.updated_at,
     problems: problems
   };
-
   return projectData;
 }
+async function deleteProjectProblems(projectId: number): Promise<void> {
+  const stmt = db.prepare('DELETE FROM problem WHERE project_id = ?');
+    const result = stmt.run(projectId);
+    debugger
 
-async function saveProblemsToDB(projectId: number, problems: ProjectData['problems']): Promise<void> {
+    console.log(`Удалены все проблемы проекта ${projectId}`);
+}
+
+function saveProblemsToDB(projectId: number, problems: ProjectData['problems']): Promise<void> {
   const query = `
     INSERT INTO problem (project_id, name, content, screenshot_html, is_selected)
     VALUES (?, ?, ?, ?, ?)
@@ -71,8 +75,8 @@ async function saveProblemsToDB(projectId: number, problems: ProjectData['proble
         problemData.screenshot_html || '',
         problemData.is_selected || null
       ];
-
-      await db.query(query, values);
+      const stmt = db.prepare(query);
+      const result = stmt.run(values);
     }
   } catch (error) {
     console.error('Ошибка при сохранении проблем:', error);
@@ -86,8 +90,8 @@ function getCreateQuery (formData: ProjectData) {
     INSERT INTO projects (
       company_name, client_name, project_name, audit_goal, 
       traffic_analysis, grow_points, logo_url, background_url, 
-      color, created_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      color
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const values = [
@@ -104,15 +108,15 @@ function getCreateQuery (formData: ProjectData) {
   return {query, values};
 }
 
-export async function createProject(formData: ProjectData): Promise<number> {
+export function createProject(formData: ProjectData): Promise<number> {
   const {query, values} = getCreateQuery(formData);
 
   try {
-    const result = await db.query(query, values);
-    const projectId = result.insertId;
-
+    const stmt = db.prepare(query);
+    const result = stmt.run(values);
+    const projectId = result.lastInsertRowid;
     if (formData.problems && Object.keys(formData.problems).length > 0) {
-      await saveProblemsToDB(projectId, formData.problems);
+      saveProblemsToDB(projectId, formData.problems);
     }
 
     return projectId;
@@ -123,18 +127,28 @@ export async function createProject(formData: ProjectData): Promise<number> {
 }
 
 export async function saveProject(formData: ProjectData): boolean {
-  const query =
-
-  let {query, values} = getCreateQuery(formData);
-  query += ` WHERE id = ${formData.id}`
-  try {
-    const result = await db.query(query, values);
-    const projectId = result.insertId;
-
-    if (formData.problems && Object.keys(formData.problems).length > 0) {
-      await saveProblemsToDB(projectId, formData.problems);
+  console.log(formData)
+  const projectUpdates: string[] = [];
+  const projectValues: any[] = [];
+  const projectExcludedFields = ['id', 'problems'];
+  let projectsQuery = 'UPDATE projects SET '
+  for (const [key, value] of Object.entries(formData)) {
+    if (projectExcludedFields.includes(key)) {
+      continue;
     }
-    return result;
+    projectUpdates.push(`${key} = ?`);
+    projectValues.push(value);
+  }
+  try {
+    projectsQuery += projectUpdates.join(', ') + ', updated_at = CURRENT_TIMESTAMP WHERE id = ?;'
+    projectValues.push(formData.id);
+    const projectStmt = db.prepare(projectsQuery);
+    const projectResult = projectStmt.run(projectValues);
+    const stmt = db.prepare('DELETE FROM problem WHERE project_id = ?');
+    const result = stmt.run([formData.id]);
+    if (Object.keys(formData.problems).length > 0) {
+      await saveProblemsToDB(formData.id, formData.problems);
+    }
   } catch (error) {
     console.error('Ошибка при сохранении проекта:', error);
     throw error;

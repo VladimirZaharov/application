@@ -35,19 +35,10 @@ CREATE TABLE IF NOT EXISTS projects
 
 CREATE TABLE IF NOT EXISTS problem
 (
-    id
-    INTEGER
-    PRIMARY
-    KEY
-    AUTOINCREMENT,
-    project_id
-    INTEGER,
-    name
-    TEXT,
-    content
-    TEXT,
-    screenshot_html
-    TEXT,
-    is_selected
-    BLOB
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id INTEGER,
+    name TEXT,
+    content TEXT,
+    screenshot_html TEXT,
+    is_selected BOOLEAN
 );
