@@ -1,21 +1,5 @@
 {
-  "node": {
-    "609ac056045fca2df9a3967a20fd230b5d8e987dc2": {
-      "workers": {
-        "app/editor/page": {
-          "moduleId": "[project]/.next-internal/server/app/editor/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "handleToneAdjustment",
-          "filename": "src/app/actions.ts"
-        }
-      },
-      "layer": {
-        "app/editor/page": "action-browser"
-      },
-      "filename": "src/app/actions.ts",
-      "exportedName": "handleToneAdjustment"
-    }
-  },
+  "node": {},
   "edge": {},
-  "encryptionKey": "MSLsMsGDFu6Ce+01bukN/kjq3jXGJXUQjVJNPFCjnEc="
+  "encryptionKey": "kxIk4w5pa7nh5QXCZRy4wHljw/JsCfHo7FuHPL/uua0="
 }
