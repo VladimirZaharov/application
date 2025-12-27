@@ -388,7 +388,7 @@ export default function EditorSidebar({projectData, adjustTone, isAdjustingTone}
                                                                             )}
                                                                         </div>
                                                                     </AccordionContent>
-                                                                )}
+                                                                ) || ""}
                                                             </AccordionItem>
                                                         </Accordion>
                                                     );
