@@ -4,17 +4,17 @@ import Image from 'next/image';
 import type { CSSProperties } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import type { Branding, Proposal } from '@/lib/types';
 import { PropoCraftIcon } from './icons';
+import {ProjectData} from '@/lib/types';
 
 interface PreviewPanelProps {
-  proposal: Proposal;
-  branding: Branding;
+  formData: ProjectData,
+  mainProposalText: string,
 }
 
-export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) {
+export default function PreviewPanel({ formData, mainProposalText }: PreviewPanelProps) {
   const accentStyle = {
-    borderColor: branding.accentColor,
+    borderColor: formData.color,
     color: '#2D4777',
   } as CSSProperties;
 
@@ -63,7 +63,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
   };
   
   const cardStyle = {
-    backgroundImage: branding.backgroundUrl ? `url(${branding.backgroundUrl})` : 'none',
+    backgroundImage: formData.background_url ? `url(${formData.background_url})` : 'none',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
   };
@@ -74,7 +74,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
       <Card className="w-full max-w-4xl mx-auto shadow-xl print-content overflow-hidden" id="proposal-preview">
          <div className="absolute inset-0" style={cardStyle}></div>
          <CardContent className="p-8 md:p-12 relative bg-card/95">
-          <div className="absolute top-0 -right-8 bottom-0 flex flex-col justify-around h-full py-4 pointer-events-none">
+          <div className="watermark absolute top-0 -right-8 bottom-0 flex flex-col justify-around h-full py-4 pointer-events-none">
               {Array.from({ length: 10 }).map((_, i) => (
                 <div key={i} style={{ marginBottom: '3px' }}>
                   <Image
@@ -89,9 +89,9 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
             </div>
           <header className="mb-12">
              <div className="mb-8 h-[80px] flex items-center justify-center">
-              {branding.logoUrl ? (
+              {formData.logo_url ? (
                 <Image
-                  src={branding.logoUrl}
+                  src={formData.logo_url}
                   alt="Логотип компании"
                   width={640}
                   height={160}
@@ -101,16 +101,16 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
               ) : (
                 <div className="flex items-center justify-center gap-2 text-muted-foreground h-[80px]">
                   <PropoCraftIcon className="w-6 h-6" />
-                  <span className="font-semibold">{branding.companyName || 'Ваша компания'}</span>
+                  <span className="font-semibold">{formData.company_name || 'Ваша компания'}</span>
                 </div>
               )}
             </div>
             <div className="text-center">
               <h1 className="text-4xl font-bold font-headline" style={{ color: '#2D4777' }}>
-                {proposal.projectName || 'Предложение по проекту'}
+                {formData.project_name || 'Предложение по проекту'}
               </h1>
               <p className="text-muted-foreground text-lg mt-1">
-                Подготовлено для: {proposal.clientName || 'Уважаемый клиент'}
+                Подготовлено для: {formData.client_name || 'Уважаемый клиент'}
               </p>
             </div>
           </header>
@@ -122,8 +122,8 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
               className="prose prose-lg max-w-none"
               style={{ '--tw-prose-headings': '#2D4777', color: '#2D4777' } as CSSProperties}
             >
-              {proposal.fullText ? (
-                renderContent(proposal.fullText)
+              {mainProposalText ? (
+                renderContent(mainProposalText)
               ) : (
                 <div className="text-center py-16 text-muted-foreground">
                   <p>Содержание вашего предложения появится здесь.</p>
@@ -135,7 +135,7 @@ export default function PreviewPanel({ proposal, branding }: PreviewPanelProps) 
 
           <footer className="mt-16 pt-6 border-t text-center text-xs text-muted-foreground">
             <p>
-              {branding.companyName || 'Ваша компания'} | ОТДЕЛ СТРАТЕГИЧЕСКОГО ПЛАНИРОВАНИЯ
+              {formData.company_name || 'Ваша компания'} | ОТДЕЛ СТРАТЕГИЧЕСКОГО ПЛАНИРОВАНИЯ
             </p>
             <p>{new Date().toLocaleDateString()}</p>
           </footer>

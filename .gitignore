@@ -12,10 +12,11 @@ build/
 .env
 .env.local
 *.env.*
-.next/
+
 # Editors
 .vscode/
 .idea/
+next/
 *.swp
 *.swo
 

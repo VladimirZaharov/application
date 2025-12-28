@@ -37,22 +37,22 @@ import {
 } from '@/components/ui/select';
 import {Separator} from '@/components/ui/separator';
 import {problemLibrary} from '@/lib/data';
-import {Problem, ProjectData} from '@/lib/types';
+import {ProjectData} from '@/lib/types';
 import {PropoCraftIcon} from './icons';
 import {Textarea} from './ui/textarea';
 import {useRouter} from 'next/navigation';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 
 interface EditorSidebarProps {
-    projectData: ProjectData,
+    formData: ProjectData,
+    setFormData: Dispatch<SetStateAction<ProjectData>>;
     adjustTone: (tone: string) => Promise<void>;
     isAdjustingTone: boolean;
 }
 
-export default function EditorSidebar({projectData, adjustTone, isAdjustingTone}: EditorSidebarProps) {
-    const [formData, setFormData] = useState({
-        ...projectData
-    });
+export default function EditorSidebar({formData, setFormData, adjustTone, isAdjustingTone}: EditorSidebarProps) {
     const router = useRouter();
 
     const handleReturnToHome = () => {
@@ -121,11 +121,10 @@ export default function EditorSidebar({projectData, adjustTone, isAdjustingTone}
     ) => {
         setFormData(prev => {
             const currentProblem = prev.problems?.[problemName];
-
             const baseProblem = {
                 id: 0,
                 project_id: prev.id || 0,
-                content: '',
+                content: problemLibrary.find((p) => p.id === problemName)?.content || "",
                 screenshot_html: '',
                 is_selected: checked ? 1 : 0
             };
@@ -161,7 +160,6 @@ export default function EditorSidebar({projectData, adjustTone, isAdjustingTone}
     };
 
     const saveData = async (formData: ProjectData) => {
-        debugger
         if (formData.id) {
             const response = await fetch('/api/projects', {
                 method: 'PUT',
@@ -192,8 +190,151 @@ export default function EditorSidebar({projectData, adjustTone, isAdjustingTone}
         }
     }
 
-    const handlePrint = () => {
-        window.print();
+    const handlePrint = async () => {
+        const elementRef = document.getElementById("proposal-preview");
+        if (!elementRef) {
+            return
+        }
+        ;
+        const element = elementRef.cloneNode(true)
+        const watermarks = element.querySelectorAll(".watermark"); // ищем по классу
+        watermarks.forEach(wm => wm.remove());
+
+        try {
+            // 1. Клонируем элемент и подготавливаем для рендеринга
+            const clonedElement = element.cloneNode(true) as HTMLElement;
+
+            // Убираем ненужные элементы
+            const elementsToRemove = clonedElement.querySelectorAll(
+                'button, [class*="button"], .no-print'
+            );
+            elementsToRemove.forEach(el => el.remove());
+
+            // Устанавливаем стили для печати
+            clonedElement.style.width = '794px'; // 210mm * 96dpi / 25.4 ≈ 794px
+            clonedElement.style.minHeight = 'auto';
+            clonedElement.style.padding = '40px';
+            clonedElement.style.backgroundColor = 'white';
+            clonedElement.style.color = 'black';
+            clonedElement.style.fontSize = '14px';
+
+            // Временно добавляем в DOM
+            clonedElement.style.position = 'absolute';
+            clonedElement.style.left = '-9999px';
+            clonedElement.style.top = '0';
+            document.body.appendChild(clonedElement);
+
+            // 2. Генерируем ОДИН canvas всего контента
+            const canvas = await html2canvas(clonedElement, {
+                scale: 2, // Высокое качество
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                logging: false,
+                windowWidth: clonedElement.scrollWidth,
+                windowHeight: clonedElement.scrollHeight,
+            });
+
+            // Удаляем временный элемент
+            document.body.removeChild(clonedElement);
+
+            // 3. Создаем PDF
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4',
+                compress: true
+            });
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+
+            // Отступы по краям страницы
+            const margin = 10; // 10mm с каждой стороны
+            const contentWidth = pdfWidth - (margin * 2);
+
+            // 4. Рассчитываем размеры изображения в PDF
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+            // Пропорции оригинала
+            const originalWidth = canvas.width;
+            const originalHeight = canvas.height;
+
+            // Масштабируем ширину под ширину контента в PDF
+            const scaleFactor = contentWidth / originalWidth;
+            const scaledHeight = originalHeight * scaleFactor;
+
+            // 5. Разбиваем на страницы
+            const pageHeight = pdfHeight - (margin * 2); // Высота доступного пространства на странице
+            let currentPosition = 0; // Текущая позиция по вертикали в масштабированных координатах
+            let pageNumber = 0;
+
+            // Функция для создания canvas фрагмента
+            const createPageFragment = (startY: number, height: number) => {
+                // Создаем временный canvas для фрагмента
+                const fragmentCanvas = document.createElement('canvas');
+                const ctx = fragmentCanvas.getContext('2d')!;
+
+                // Рассчитываем координаты в оригинальном масштабе
+                const originalStartY = startY / scaleFactor;
+                const originalHeight = height / scaleFactor;
+
+                // Устанавливаем размеры фрагмента
+                fragmentCanvas.width = originalWidth;
+                fragmentCanvas.height = Math.min(originalHeight, originalHeight);
+
+                // Вырезаем часть из оригинального canvas
+                ctx.drawImage(
+                    canvas,
+                    0, originalStartY, // Координаты в оригинальном canvas
+                    originalWidth, originalHeight, // Размер вырезаемой области
+                    0, 0, // Начало отрисовки в фрагменте
+                    originalWidth, originalHeight // Размер фрагмента
+                );
+
+                return fragmentCanvas;
+            };
+
+            // 6. Генерируем страницы
+            while (currentPosition < scaledHeight) {
+                // Создаем новую страницу если это не первая
+                if (pageNumber > 0) {
+                    pdf.addPage();
+                }
+
+                // Вычисляем высоту фрагмента для текущей страницы
+                const fragmentHeight = Math.min(pageHeight, scaledHeight - currentPosition);
+
+                // Создаем фрагмент для текущей страницы
+                const fragmentCanvas = createPageFragment(currentPosition, fragmentHeight);
+                const fragmentData = fragmentCanvas.toDataURL('image/jpeg', 0.95);
+
+                // Добавляем фрагмент на страницу
+                pdf.addImage(
+                    fragmentData,
+                    'JPEG',
+                    margin, // X позиция
+                    margin, // Y позиция
+                    contentWidth,
+                    fragmentHeight,
+                    undefined,
+                    'MEDIUM'
+                );
+
+                // Переходим к следующей позиции
+                currentPosition += fragmentHeight;
+                pageNumber++;
+
+                // Очищаем canvas фрагмента
+                fragmentCanvas.width = 0;
+                fragmentCanvas.height = 0;
+            }
+
+            // 7. Сохраняем PDF
+            pdf.save(`${new Date().toISOString().split('T')[0]}.pdf`);
+
+        } catch (error) {
+            console.error('Ошибка при генерации PDF:', error);
+        }
     };
 
     const problemsByCategory = problemLibrary.reduce((acc, problem) => {

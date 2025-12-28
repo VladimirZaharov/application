@@ -7,19 +7,6 @@ export interface Problem {
   content: string;
 }
 
-export interface Branding {
-  logoUrl: string;
-  accentColor: string;
-  companyName: string;
-  backgroundUrl: string;
-}
-
-export interface Proposal {
-  clientName: string;
-  projectName: string;
-  fullText: string;
-}
-
 export interface ProjectsList {
   id: number;
   project_name: string;
